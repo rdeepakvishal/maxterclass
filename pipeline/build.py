@@ -48,7 +48,15 @@ def main() -> int:
     quali = read("qualifying")
     constructors = read("constructors")
     lap_times = read("lap_times")
+    sprint = read("sprint_results")
     pit_stops = read("pit_stops")
+
+    sprint_pts = (
+        sprint.merge(races[["raceId", "year"]], on="raceId")
+        .query("driverId == @VER")
+        .groupby("year")
+        .points.sum()
+    )
 
     name_of = drivers.set_index("driverId").apply(
         lambda r: f"{r.forename} {r.surname}", axis=1
@@ -111,7 +119,13 @@ def main() -> int:
         won=("ver_ahead", "sum"),
         mates=("driverId", lambda s: sorted({name_of[i] for i in s})),
     )
-    poles = q[(q.driverId == VER) & (q.position == 1)].groupby("year").size()
+    # Public records count a pole as starting P1, not as setting the fastest
+    # qualifying lap: five of Verstappen's qualifying-fastest weekends carried a
+    # grid penalty (three of them Spa), and in 2021 the sprint winner was awarded
+    # pole. Counting qualifying P1 gives 51; counting grid P1 gives 48, which is
+    # the figure public sources report, season by season.
+    poles = ver[ver.grid == 1].groupby("year").size()
+    fastest_quali = q[(q.driverId == VER) & (q.position == 1)].groupby("year").size()
     avg_quali = q[q.driverId == VER].groupby("year").position.mean()
 
     # ---- season table ------------------------------------------------------
@@ -133,7 +147,10 @@ def main() -> int:
                 "wins": int((d.fin == 1).sum()),
                 "podiums": int((d.fin <= 3).sum()),
                 "poles": int(poles.get(yr, 0)),
-                "points": float(d.points.sum()),
+                "fastest_quali": int(fastest_quali.get(yr, 0)),
+                "points": float(d.points.sum()) + float(sprint_pts.get(yr, 0.0)),
+                "race_points": float(d.points.sum()),
+                "sprint_points": float(sprint_pts.get(yr, 0.0)),
                 "dnf": int((~d.classified).sum()),
                 "finish_rate": round(float(d.classified.mean()) * 100, 1),
                 "avg_grid": round(float(d.grid.mean()), 2),
@@ -245,10 +262,10 @@ def main() -> int:
             "podiums": int((ver.fin <= 3).sum()),
             "poles": int(poles.sum()),
             "fastest_laps": int(ver.fastest_lap.sum()),
-            "points": float(ver.points.sum()),
+            "points": float(ver.points.sum()) + float(sprint_pts.sum()),
             "laps_led": int(sum(s["laps_led"] for s in seasons)),
             "wins_from_pole": int((wins.grid == 1).sum()),
-            "wins_off_pole": int((wins.grid > 1).sum()),
+            "wins_off_pole": int(len(wins)) - int((wins.grid == 1).sum()),
         },
         "seasons": seasons,
         "rivals": rivals,
