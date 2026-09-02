@@ -1,0 +1,287 @@
+"""Build the Verstappen-decade infographic from the Ergast/Kaggle F1 CSVs.
+
+Reads data/raw/*.csv, computes the season metrics the story needs, and injects
+them into site/template.html to produce a single self-contained site/index.html.
+
+Run:  python3 pipeline/build.py
+"""
+from __future__ import annotations
+
+import json
+import pathlib
+import sys
+
+import numpy as np
+import pandas as pd
+
+VER = 830                     # Max Verstappen's Ergast driverId
+START_YEAR = 2015             # his debut season
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+RAW = ROOT / "data" / "raw"
+SITE = ROOT / "site"
+
+# Ergast encodes nulls as the literal two-character string \N.
+NA = ["\\N"]
+
+
+def read(name: str) -> pd.DataFrame:
+    return pd.read_csv(RAW / f"{name}.csv", na_values=NA)
+
+
+def classified(results: pd.DataFrame) -> pd.Series:
+    """True when the driver was classified with a finishing position.
+
+    IMPORTANT: classify on positionText, not position. In the 2026 rows of this
+    dataset `position` is populated even for retirements (positionText 'R'),
+    while pre-2026 rows correctly leave it null. Using `position` would score a
+    lap-0 engine failure as "finished 22nd" and corrupt every position-gain
+    metric downstream.
+    """
+    return results.positionText.astype(str).str.isdigit()
+
+
+def main() -> int:
+    results = read("results")
+    races = read("races")
+    drivers = read("drivers")
+    status = read("status")
+    quali = read("qualifying")
+    constructors = read("constructors")
+    lap_times = read("lap_times")
+    pit_stops = read("pit_stops")
+
+    name_of = drivers.set_index("driverId").apply(
+        lambda r: f"{r.forename} {r.surname}", axis=1
+    )
+
+    race_cols = ["raceId", "year", "round", "name", "date"]
+    res = (
+        results.merge(races[race_cols], on="raceId")
+        .merge(status, on="statusId")
+        .merge(
+            constructors[["constructorId", "name"]],
+            on="constructorId",
+            suffixes=("_race", "_team"),
+        )
+    )
+    res["classified"] = classified(res)
+    res["fin"] = np.where(
+        res.classified, pd.to_numeric(res.positionText, errors="coerce"), np.nan
+    )
+    res["grid"] = pd.to_numeric(res.grid, errors="coerce").replace(0, np.nan)
+    res["gain"] = np.where(res.classified, res.grid - res.fin, np.nan)
+    res["fastest_lap"] = pd.to_numeric(res["rank"], errors="coerce") == 1
+
+    # Only seasons that actually have results (the file carries a future calendar).
+    scored_years = sorted(res.loc[res.year >= START_YEAR, "year"].unique())
+
+    ver = res[res.driverId == VER].copy()
+
+    # ---- lap-by-lap: laps led, and on-track places gained/lost -------------
+    laps = lap_times.merge(races[["raceId", "year"]], on="raceId")
+    laps = laps[laps.year >= START_YEAR].sort_values(["raceId", "driverId", "lap"])
+
+    led = laps[laps.position == 1].groupby(["year", "driverId"]).size().rename("laps_led")
+    season_lead_laps = laps[laps.position == 1].groupby("year").size()
+
+    # A pit stop swaps track position without an overtake, so drop the in-lap
+    # and the following out-lap before counting position changes.
+    pit = pit_stops[["raceId", "driverId", "lap"]].drop_duplicates().assign(pit_in=1)
+    f = laps.merge(pit, on=["raceId", "driverId", "lap"], how="left")
+    f["pit_in"] = f.pit_in.fillna(0)
+    grp = f.groupby(["raceId", "driverId"])
+    f["pit_out"] = grp.pit_in.shift(1).fillna(0)
+    f["prev"] = grp.position.shift(1)
+    clean = f[(f.pit_in == 0) & (f.pit_out == 0) & f.prev.notna()].copy()
+    clean["delta"] = clean.prev - clean.position
+    clean["gained"] = clean.delta.clip(lower=0)
+    clean["lost"] = (-clean.delta).clip(lower=0)
+    moves = clean.groupby(["year", "driverId"])[["gained", "lost"]].sum()
+
+    # ---- qualifying: poles and the teammate head-to-head -------------------
+    q = quali.merge(races[["raceId", "year"]], on="raceId")
+    vq = q[q.driverId == VER][["raceId", "year", "constructorId", "position"]].rename(
+        columns={"position": "ver_pos"}
+    )
+    mate = q.merge(vq, on=["raceId", "year", "constructorId"])
+    mate = mate[mate.driverId != VER].copy()
+    mate["ver_ahead"] = mate.position > mate.ver_pos
+    h2h = mate.groupby("year").agg(
+        n=("ver_ahead", "size"),
+        won=("ver_ahead", "sum"),
+        mates=("driverId", lambda s: sorted({name_of[i] for i in s})),
+    )
+    poles = q[(q.driverId == VER) & (q.position == 1)].groupby("year").size()
+    avg_quali = q[q.driverId == VER].groupby("year").position.mean()
+
+    # ---- season table ------------------------------------------------------
+    seasons = []
+    for yr in scored_years:
+        d = ver[ver.year == yr]
+        if d.empty:
+            continue
+        gl = moves.loc[(yr, VER)] if (yr, VER) in moves.index else pd.Series({"gained": 0, "lost": 0})
+        gained, lost = float(gl.gained), float(gl.lost)
+        ll = int(led.get((yr, VER), 0))
+        total_lead = int(season_lead_laps.get(yr, 0))
+        hh = h2h.loc[yr] if yr in h2h.index else None
+        seasons.append(
+            {
+                "year": int(yr),
+                "team": " / ".join(sorted(set(d.name_team))),
+                "races": int(len(d)),
+                "wins": int((d.fin == 1).sum()),
+                "podiums": int((d.fin <= 3).sum()),
+                "poles": int(poles.get(yr, 0)),
+                "points": float(d.points.sum()),
+                "dnf": int((~d.classified).sum()),
+                "finish_rate": round(float(d.classified.mean()) * 100, 1),
+                "avg_grid": round(float(d.grid.mean()), 2),
+                "avg_finish": round(float(d.fin.mean()), 2),
+                "avg_quali": round(float(avg_quali.get(yr, np.nan)), 2),
+                "net_gain": int(np.nansum(d.gain)),
+                "fastest_laps": int(d.fastest_lap.sum()),
+                "laps_led": ll,
+                "season_lead_laps": total_lead,
+                "pct_laps_led": round(ll / total_lead * 100, 1) if total_lead else 0.0,
+                "gained": gained,
+                "lost": lost,
+                "gain_ratio": round(gained / lost, 2) if lost else None,
+                "h2h_n": int(hh.n) if hh is not None else 0,
+                "h2h_won": int(hh.won) if hh is not None else 0,
+                "h2h_pct": round(float(hh.won) / float(hh.n) * 100) if hh is not None and hh.n else None,
+                "teammates": hh.mates if hh is not None else [],
+            }
+        )
+
+    # ---- who else led laps, per season (the field closing in) --------------
+    rivals = {}
+    for yr in scored_years:
+        s = led.loc[yr] if yr in led.index.get_level_values(0) else pd.Series(dtype=int)
+        total = int(season_lead_laps.get(yr, 0)) or 1
+        top = s.sort_values(ascending=False).head(5)
+        rivals[int(yr)] = [
+            {
+                "driver": name_of[i],
+                "laps_led": int(v),
+                "pct": round(v / total * 100, 1),
+                "is_ver": bool(i == VER),
+            }
+            for i, v in top.items()
+        ]
+
+    # ---- race-by-race strip and the standout drives ------------------------
+    timeline = [
+        {
+            "year": int(r.year),
+            "round": int(r.round),
+            "race": r.name_race,
+            "grid": None if pd.isna(r.grid) else int(r.grid),
+            "finish": None if pd.isna(r.fin) else int(r.fin),
+            "points": float(r.points),
+            "status": r.status,
+            "classified": bool(r.classified),
+        }
+        for r in ver.sort_values(["year", "round"]).itertuples()
+    ]
+
+    comebacks = [
+        {
+            "year": int(r.year),
+            "race": r.name_race,
+            "grid": int(r.grid),
+            "finish": int(r.fin),
+            "gain": int(r.gain),
+        }
+        for r in ver[ver.classified & ver.gain.notna()]
+        .nlargest(8, "gain")
+        .itertuples()
+    ]
+
+
+    # ---- the overtaking illusion: raw volume vs gained-per-lost -----------
+    FOCUS = 2023
+    starts = f.groupby(["year", "driverId"]).raceId.nunique().rename("starts")
+    grids = (
+        res[res.classified | ~res.classified]
+        .groupby(["year", "driverId"])
+        .grid.mean()
+        .rename("avg_grid")
+    )
+    ot = moves.join(starts).join(grids).reset_index()
+    ot = ot[(ot.year == FOCUS) & (ot.starts >= 10)].copy()
+    ot["ratio"] = ot.gained / ot.lost.replace(0, np.nan)
+
+    def ot_rows(frame):
+        return [
+            {
+                "driver": name_of[r.driverId],
+                "gained": int(r.gained),
+                "lost": int(r.lost),
+                "ratio": round(float(r.ratio), 2),
+                "avg_grid": round(float(r.avg_grid), 1),
+                "is_ver": bool(r.driverId == VER),
+            }
+            for r in frame.itertuples()
+        ]
+
+    by_gained = ot.sort_values("gained", ascending=False)
+    ver_rank = int((by_gained.driverId.values == VER).argmax()) + 1
+    top_raw = by_gained.head(10)
+    if VER not in top_raw.driverId.values:
+        top_raw = pd.concat([top_raw, by_gained[by_gained.driverId == VER]])
+    top_ratio = ot.sort_values("ratio", ascending=False).head(8)
+
+    wins = ver[ver.fin == 1]
+    payload = {
+        "meta": {
+            "source": "Ergast / Kaggle jtrotman/formula-1-race-data",
+            "through": str(res.date.max()),
+            "driver": "Max Verstappen",
+        },
+        "career": {
+            "races": int(len(ver)),
+            "wins": int((ver.fin == 1).sum()),
+            "podiums": int((ver.fin <= 3).sum()),
+            "poles": int(poles.sum()),
+            "fastest_laps": int(ver.fastest_lap.sum()),
+            "points": float(ver.points.sum()),
+            "laps_led": int(sum(s["laps_led"] for s in seasons)),
+            "wins_from_pole": int((wins.grid == 1).sum()),
+            "wins_off_pole": int((wins.grid > 1).sum()),
+        },
+        "seasons": seasons,
+        "rivals": rivals,
+        "timeline": timeline,
+        "comebacks": comebacks,
+        "overtakes_2023_raw": ot_rows(top_raw),
+        "overtakes_2023_ratio": ot_rows(top_ratio),
+        "overtakes_2023_ver_rank": ver_rank,
+        "overtakes_2023_pool": int(len(ot)),
+        "overtakes_2023_focus": FOCUS,
+        "wins_by_grid": {
+            int(k): int(v) for k, v in wins.grid.value_counts().sort_index().items()
+        },
+    }
+
+    SITE.mkdir(exist_ok=True)
+    (SITE / "data.json").write_text(json.dumps(payload, indent=2))
+
+    template = (SITE / "template.html").read_text()
+    marker = "/*__DATA__*/"
+    if marker not in template:
+        print(f"error: {marker} not found in site/template.html", file=sys.stderr)
+        return 1
+    html = template.replace(marker, json.dumps(payload, separators=(",", ":")))
+    (SITE / "index.html").write_text(html)
+
+    print(f"seasons {seasons[0]['year']}-{seasons[-1]['year']}  "
+          f"races {payload['career']['races']}  wins {payload['career']['wins']}  "
+          f"poles {payload['career']['poles']}")
+    print(f"VER 2023 rank by raw places gained: {ver_rank}")
+    print(f"wrote site/data.json and site/index.html ({len(html):,} bytes)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

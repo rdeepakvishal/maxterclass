@@ -1,0 +1,608 @@
+<title>The Verstappen Decade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#edeef0; --panel:#f6f7f9; --sunk:#e4e6ea;
+  --ink:#10182a; --ink-2:#4a5468; --ink-3:#78849a;
+  --rule:#d3d7de; --grid:#dfe2e8;
+  --accent:#d9540a; --field:#2a78d6;
+  --shadow:0 1px 2px rgba(16,24,42,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    --ground:#0b1220; --panel:#121b2d; --sunk:#0e1626;
+    --ink:#eef2f8; --ink-2:#a8b4c8; --ink-3:#6f7d94;
+    --rule:#22304a; --grid:#1b2740;
+    --accent:#d95926; --field:#3987e5;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0b1220; --panel:#121b2d; --sunk:#0e1626;
+  --ink:#eef2f8; --ink-2:#a8b4c8; --ink-3:#6f7d94;
+  --rule:#22304a; --grid:#1b2740;
+  --accent:#d95926; --field:#3987e5;
+  --shadow:none;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.6; margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px 96px}
+h1,h2,h3{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- eyebrow / rules ---------- */
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink-3);
+}
+.rule{height:1px;background:var(--rule);border:0;margin:0}
+
+/* ---------- hero ---------- */
+.hero{padding:72px 0 40px}
+.hero h1{
+  font-size:clamp(44px,8vw,92px); font-weight:800; line-height:.94;
+  letter-spacing:-.035em; margin:18px 0 0;
+}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.dek{
+  font-size:clamp(17px,2.1vw,21px); color:var(--ink-2); max-width:60ch;
+  margin:24px 0 0; line-height:1.55;
+}
+.stamp{
+  display:flex;flex-wrap:wrap;gap:28px;margin-top:36px;padding-top:24px;
+  border-top:1px solid var(--rule);
+}
+.stamp div{display:flex;flex-direction:column;gap:2px}
+.stamp b{font-family:Archivo,sans-serif;font-size:30px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stamp span{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ---------- sections ---------- */
+section{padding-top:76px}
+.shead{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+.shead h2{font-size:clamp(26px,3.6vw,38px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.shead p{margin:0;color:var(--ink-2);max-width:66ch;font-size:16.5px}
+.note{color:var(--ink-2);max-width:66ch;font-size:15.5px}
+
+/* ---------- figure ---------- */
+figure{margin:32px 0 0;background:var(--panel);border:1px solid var(--rule);border-radius:3px;padding:24px;box-shadow:var(--shadow)}
+figcaption{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);font-size:13.5px;color:var(--ink-2)}
+.scroll{overflow-x:auto}
+svg{display:block;max-width:100%;height:auto}
+.legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:7px;vertical-align:-1px}
+.legend span{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.05em;color:var(--ink-2)}
+
+/* svg text roles */
+.ax{font-family:"IBM Plex Mono",monospace;font-size:11px;fill:var(--ink-3);font-variant-numeric:tabular-nums}
+.lab{font-family:"IBM Plex Mono",monospace;font-size:11.5px;fill:var(--ink-2);font-variant-numeric:tabular-nums}
+.labhi{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;fill:var(--ink);font-variant-numeric:tabular-nums}
+.gl{stroke:var(--grid);stroke-width:1}
+
+/* ---------- pull ---------- */
+.pull{
+  margin:40px 0 0;padding:28px 30px;border-left:3px solid var(--accent);
+  background:var(--sunk);border-radius:0 3px 3px 0;
+}
+.pull p{margin:0;font-family:Archivo,sans-serif;font-size:clamp(19px,2.6vw,25px);font-weight:600;letter-spacing:-.015em;line-height:1.32}
+.pull small{display:block;margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ---------- season table ---------- */
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px}
+th{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;text-align:right;padding:0 10px 10px;border-bottom:1px solid var(--rule);
+}
+th:first-child,th.l{text-align:left}
+td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums;white-space:nowrap}
+td:first-child,td.l{text-align:left}
+tbody tr:hover{background:var(--sunk)}
+.yr{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--ink)}
+.era{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3);letter-spacing:.04em}
+.peak td{background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.wbar{display:inline-block;height:8px;border-radius:1px;background:var(--accent);vertical-align:-1px;margin-right:7px}
+
+/* ---------- tooltip ---------- */
+.tip{
+  position:fixed;pointer-events:none;z-index:60;opacity:0;transition:opacity .1s;
+  background:var(--ink);color:var(--ground);padding:8px 11px;border-radius:3px;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;white-space:pre;
+  box-shadow:0 4px 14px rgba(0,0,0,.28);
+}
+.hit{fill:transparent;cursor:crosshair}
+
+/* ---------- footer ---------- */
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--rule);font-size:13.5px;color:var(--ink-3)}
+footer h3{font-size:13px;font-family:"IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-bottom:10px}
+footer p{margin:0 0 10px;max-width:70ch}
+footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-2)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:640px){ .hero{padding:48px 0 28px} .stamp{gap:20px} .stamp b{font-size:24px} }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Formula 1 &middot; 2015&ndash;2026 &middot; 245 starts</div>
+    <h1>The masterclass<br>never left.<br><em>The car did.</em></h1>
+    <p class="dek">
+      Across twelve seasons Max Verstappen went from a 17-year-old rookie to the most
+      dominant driver in modern Formula 1, and then watched the wins evaporate. The
+      instinct is to read that as decline. The lap-by-lap data says something else.
+    </p>
+    <div class="stamp" id="stamp"></div>
+  </header>
+
+  <section id="ridge">
+    <div class="shead">
+      <div class="eyebrow">The shape of a career</div>
+      <h2>Share of every racing lap led</h2>
+      <p>
+        The cleanest single measure of dominance isn't wins &mdash; it's how much of the season
+        a driver spends in front. Of all the laps run at the front by anyone in 2023,
+        Verstappen led three quarters of them.
+      </p>
+    </div>
+    <figure>
+      <div class="scroll"><div id="c-ridge"></div></div>
+      <figcaption>
+        Percentage of all lead laps in each season led by Verstappen. A lead lap is one lap
+        of one race with a car classified first on that lap; the denominator is every such lap
+        in the season.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section id="seasons">
+    <div class="shead">
+      <div class="eyebrow">The record</div>
+      <h2>Twelve seasons, line by line</h2>
+      <p>
+        Six distinct phases. Note the two columns that behave differently from all the others:
+        finishing rate, which fixes itself in 2021, and the qualifying head-to-head against
+        his own teammate, which never falls apart at all.
+      </p>
+    </div>
+    <figure>
+      <div class="scroll"><table id="t-seasons"></table></div>
+      <figcaption>
+        DNF counts classify on Ergast's <code>positionText</code>, not <code>position</code> &mdash;
+        see the method note at the foot of the page.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section id="illusion">
+    <div class="shead">
+      <div class="eyebrow">The overtaking illusion</div>
+      <h2>Counting overtakes measures bad qualifying</h2>
+      <p>
+        In 2023 &mdash; the most dominant season any driver has had in the modern era &mdash;
+        Verstappen finished <b id="ot-rank"></b> on the overtaking charts. The drivers above
+        him weren't better racers; they simply started further back and had more cars in front
+        of them to pass. Overtaking volume is a measure of where you started, not how well you
+        raced.
+      </p>
+    </div>
+    <figure>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Verstappen</span>
+        <span><i style="background:var(--field)"></i>Rest of the field</span>
+      </div>
+      <div class="scroll"><div id="c-raw"></div></div>
+      <figcaption>2023 &middot; on-track places gained, pit in-laps and out-laps excluded so a pit stop never counts as a pass.</figcaption>
+    </figure>
+    <p class="note" style="margin-top:32px">
+      Divide instead by the places each driver <em>lost</em>, and the picture inverts. Verstappen
+      gave up four positions on track in the entire 2023 season.
+    </p>
+    <figure>
+      <div class="scroll"><div id="c-ratio"></div></div>
+      <figcaption>2023 &middot; places gained per place lost, drivers with 10+ starts. Higher is better.</figcaption>
+    </figure>
+  </section>
+
+  <section id="field">
+    <div class="shead">
+      <div class="eyebrow">The field closes</div>
+      <h2>Who else got to lead</h2>
+      <p>
+        Dominance is a share, and shares get taken. Four snapshots: the title fight, the peak,
+        the year it became a three-way, and the reset.
+      </p>
+    </div>
+    <figure>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Verstappen</span>
+        <span><i style="background:var(--field)"></i>Other drivers who led laps</span>
+      </div>
+      <div id="c-field"></div>
+      <figcaption>Top five lap-leaders in each season, as a share of all lead laps that year.</figcaption>
+    </figure>
+    <div class="pull">
+      <p>In 2025 Verstappen led 454 laps. Oscar Piastri led 452. An entire season decided the front of the field by two laps.</p>
+      <small>Season lead laps &middot; 2025</small>
+    </div>
+  </section>
+
+  <section id="control">
+    <div class="shead">
+      <div class="eyebrow">The control group</div>
+      <h2>The one variable that holds</h2>
+      <p>
+        Every driver shares a garage, a budget and a car with exactly one other person. That
+        teammate is the closest thing motorsport has to a controlled experiment: same machinery,
+        same weekend, same track. So watch what happens when the wins fall off a cliff and the
+        teammate comparison doesn't move.
+      </p>
+    </div>
+    <figure>
+      <div id="c-control"></div>
+      <figcaption>
+        Above: race wins per season. Below: share of qualifying sessions in which Verstappen
+        out-qualified his own teammate. Separate charts, separate scales &mdash; deliberately not
+        plotted on shared axes.
+      </figcaption>
+    </figure>
+    <div class="pull">
+      <p>2025 was called his worst season in five years. He beat his teammate in qualifying 24 times out of 24.</p>
+      <small>Qualifying head-to-head &middot; 2025</small>
+    </div>
+  </section>
+
+  <section id="drives">
+    <div class="shead">
+      <div class="eyebrow">The evidence on track</div>
+      <h2>The drives that don't need a fast car</h2>
+      <p>
+        If the talent were fading, the recovery drives would fade first &mdash; they're the ones
+        that depend least on machinery and most on racecraft. Three of his eight biggest
+        comebacks have come in the last three seasons, including a win from seventeenth.
+      </p>
+    </div>
+    <figure>
+      <div class="legend">
+        <span><i style="border:1.5px solid var(--accent);background:transparent;border-radius:50%"></i>Grid slot</span>
+        <span><i style="background:var(--accent);border-radius:50%"></i>Finishing position</span>
+      </div>
+      <div class="scroll"><div id="c-comeback"></div></div>
+      <figcaption>Largest grid-to-finish gains of his career, plotted on one position axis: the hollow dot is where he started, the solid dot where he finished.</figcaption>
+    </figure>
+  </section>
+
+  <section id="strip">
+    <div class="shead">
+      <div class="eyebrow">Every start</div>
+      <h2>245 races</h2>
+      <p>One mark per grand prix, in order. The density of wins through the middle of the decade is the whole story in one line.</p>
+    </div>
+    <figure>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Win</span>
+        <span><i style="background:var(--field)"></i>Podium</span>
+        <span><i style="background:var(--ink-3)"></i>Points / classified</span>
+        <span><i style="border:1px solid var(--ink-3);background:transparent"></i>Did not finish</span>
+      </div>
+      <div class="scroll"><div id="c-strip"></div></div>
+      <figcaption>Hover any mark for the race, grid slot and result.</figcaption>
+    </figure>
+  </section>
+
+  <footer>
+    <h3>Method &amp; source</h3>
+    <p id="src"></p>
+    <p>
+      <b>Classifying retirements.</b> Ergast marks a retirement with <code>positionText = "R"</code>.
+      In this snapshot the 2026 rows also carry a numeric <code>position</code> for those
+      retirements, while earlier seasons leave it null. Classifying on <code>position</code>
+      would score a lap-zero engine failure as &ldquo;finished 22nd&rdquo; and corrupt every
+      position-gain figure &mdash; 2026's net position change swings from &minus;34 to &plus;9
+      depending on which column you trust. Everything here classifies on <code>positionText</code>.
+    </p>
+    <p>
+      <b>Overtakes.</b> There is no overtake column in this data. Places gained and lost are
+      derived from lap-by-lap classified position, with each pit in-lap and the following
+      out-lap dropped so that a pit stop is never counted as a pass. It remains a proxy:
+      it cannot separate a pass on track from a rival's slow lap.
+    </p>
+    <p><b>Not included.</b> No telemetry &mdash; this dataset carries timing and classification only, no throttle, brake or speed traces.</p>
+  </footer>
+
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+const DATA = /*__DATA__*/;
+const S = DATA.seasons, tip = document.getElementById('tip');
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+function el(t, a = {}, parent) {
+  const n = document.createElementNS(SVGNS, t);
+  let style = '';
+  for (const k in a) {
+    // A '--token' value becomes style:fill:var(--token) — presentation
+    // attributes can't resolve var(), so baked hex would freeze the palette
+    // at load time and survive a theme toggle with the wrong colours.
+    if ((k === 'fill' || k === 'stroke') && String(a[k]).startsWith('--')) {
+      style += `${k}:var(${a[k]});`;
+    } else {
+      n.setAttribute(k, a[k]);
+    }
+  }
+  if (style) n.setAttribute('style', style);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function svg(host, w, h) {
+  const s = el('svg', { viewBox: `0 0 ${w} ${h}`, width: w, height: h, role: 'img' });
+  document.getElementById(host).appendChild(s);
+  return s;
+}
+function txt(p, x, y, s, cls = 'lab', anchor = 'start') {
+  const t = el('text', { x, y, class: cls, 'text-anchor': anchor }, p);
+  t.textContent = s;
+  return t;
+}
+function hover(node, label) {
+  node.addEventListener('mousemove', e => {
+    tip.textContent = label;
+    tip.style.opacity = 1;
+    const r = tip.getBoundingClientRect();
+    let x = e.clientX + 14, y = e.clientY - r.height - 10;
+    if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14;
+    if (y < 8) y = e.clientY + 18;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  });
+  node.addEventListener('mouseleave', () => { tip.style.opacity = 0; });
+}
+
+/* ---------- header stamps ---------- */
+const K = DATA.career;
+document.getElementById('stamp').innerHTML = [
+  [K.races, 'Starts'], [K.wins, 'Wins'], [K.poles, 'Poles'],
+  [K.podiums, 'Podiums'], [K.laps_led.toLocaleString(), 'Laps led'],
+  [K.wins_off_pole, 'Wins not from pole']
+].map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join('');
+const ORD = n => { const s = ['th','st','nd','rd'], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+document.getElementById('ot-rank').textContent =
+  `${ORD(DATA.overtakes_2023_ver_rank)} of ${DATA.overtakes_2023_pool}`;
+document.getElementById('src').textContent =
+  `${DATA.meta.source}. Results complete through ${DATA.meta.through}. Figures cover ${DATA.meta.driver} only unless a chart names other drivers.`;
+
+/* ---------- 1. laps-led ridge ---------- */
+(() => {
+  const w = 1000, h = 380, m = { t: 30, r: 20, b: 54, l: 46 };
+  const s = svg('c-ridge', w, h);
+  const iw = w - m.l - m.r, ih = h - m.t - m.b;
+  const max = 80;
+  const x = i => m.l + i * (iw / S.length) + (iw / S.length) * .5;
+  const y = v => m.t + ih - (v / max) * ih;
+  const bw = Math.min(46, (iw / S.length) - 10);
+
+  for (let g = 0; g <= 75; g += 25) {
+    el('line', { x1: m.l, x2: w - m.r, y1: y(g), y2: y(g), class: 'gl' }, s);
+    txt(s, m.l - 10, y(g) + 4, g + '%', 'ax', 'end');
+  }
+  S.forEach((d, i) => {
+    const v = d.pct_laps_led, hh = Math.max((v / max) * ih, 1.5);
+    const peak = d.year === 2023;
+    el('rect', {
+      x: x(i) - bw / 2, y: y(v), width: bw, height: hh, rx: 2,
+      fill: peak ? '--accent' : '--field', 'fill-opacity': peak ? 1 : .78
+    }, s);
+    txt(s, x(i), y(v) - 8, v.toFixed(1), peak ? 'labhi' : 'lab', 'middle');
+    txt(s, x(i), h - 32, d.year, 'ax', 'middle');
+    const hit = el('rect', { x: x(i) - (iw / S.length) / 2, y: m.t, width: iw / S.length, height: ih, class: 'hit' }, s);
+    hover(hit, `${d.year} — ${d.team}\n${d.laps_led} of ${d.season_lead_laps} lead laps (${v}%)\n${d.wins} wins · ${d.poles} poles`);
+  });
+  el('line', { x1: m.l, x2: w - m.r, y1: m.t + ih, y2: m.t + ih, stroke: '--rule' }, s);
+
+  const eras = [[0, 1, 'arrival'], [2, 5, 'fast but fragile'], [6, 7, 'the fight'], [8, 8, 'peak'], [9, 10, 'erosion'], [11, 11, 'reset']];
+  eras.forEach(([a, b, l]) => {
+    const x1 = m.l + a * (iw / S.length) + 4, x2 = m.l + (b + 1) * (iw / S.length) - 4;
+    el('line', { x1, x2, y1: h - 16, y2: h - 16, stroke: '--rule', 'stroke-width': 2 }, s);
+    txt(s, (x1 + x2) / 2, h - 4, l, 'ax', 'middle');
+  });
+})();
+
+/* ---------- 2. season table ---------- */
+(() => {
+  const eraOf = y => y <= 2016 ? 'arrival' : y <= 2020 ? 'fragile' : y <= 2022 ? 'the fight'
+    : y === 2023 ? 'peak' : y <= 2025 ? 'erosion' : 'reset';
+  const t = document.getElementById('t-seasons');
+  t.innerHTML = `<thead><tr>
+    <th class="l">Season</th><th class="l">Phase</th><th class="l">Team</th>
+    <th>Wins</th><th>Poles</th><th>Podiums</th><th>DNF</th><th>Finish&nbsp;rate</th>
+    <th>Avg&nbsp;grid</th><th>Avg&nbsp;finish</th><th>Laps&nbsp;led</th><th>Quali&nbsp;vs&nbsp;mate</th>
+  </tr></thead><tbody>` + S.map(d => `<tr class="${d.year === 2023 ? 'peak' : ''}">
+    <td class="l yr">${d.year}</td>
+    <td class="l era">${eraOf(d.year)}</td>
+    <td class="l">${d.team}</td>
+    <td><span class="wbar" style="width:${d.wins * 2.4}px"></span>${d.wins}</td>
+    <td>${d.poles}</td><td>${d.podiums}</td><td>${d.dnf}</td><td>${d.finish_rate}%</td>
+    <td>${d.avg_grid.toFixed(1)}</td><td>${d.avg_finish.toFixed(2)}</td>
+    <td>${d.pct_laps_led}%</td>
+    <td><b>${d.h2h_pct}%</b> <span class="era">${d.h2h_won}/${d.h2h_n}</span></td>
+  </tr>`).join('') + '</tbody>';
+})();
+
+/* ---------- 3. the overtaking illusion ---------- */
+function hbars(host, rows, unit, fmt) {
+  const w = 1000, rh = 30, m = { t: 12, r: 76, b: 30, l: 190 };
+  const brkAt = rows.findIndex(r => r.brk);
+  const BRK = 26;                       // extra space inserted before a break row
+  const off = i => (brkAt >= 0 && i >= brkAt ? BRK : 0);
+  const h = m.t + rows.length * rh + (brkAt >= 0 ? BRK : 0) + m.b;
+  const s = svg(host, w, h);
+  const iw = w - m.l - m.r;
+  const max = Math.max(...rows.map(r => r.v)) * 1.02;
+  rows.forEach((r, i) => {
+    const yy = m.t + i * rh + off(i), bh = 15;
+    if (r.brk) {
+      const by = yy - BRK / 2;
+      el('line', { x1: 26, x2: w - m.r, y1: by, y2: by, stroke: '--rule',
+                   'stroke-width': 1, 'stroke-dasharray': '3 4' }, s);
+      el('rect', { x: m.l - 116, y: by - 8, width: 232, height: 16, fill: '--panel' }, s);
+      txt(s, m.l, by + 4, r.brk, 'ax', 'middle');
+    }
+    const bw = Math.max((r.v / max) * iw, 2);
+    el('rect', { x: m.l, y: yy + 6, width: bw, height: bh, rx: 3, fill: r.hi ? '--accent' : '--field', 'fill-opacity': r.hi ? 1 : .68 }, s);
+    txt(s, m.l - 12, yy + 18, r.name, r.hi ? 'labhi' : 'lab', 'end');
+    txt(s, m.l + bw + 9, yy + 18, fmt(r.v), r.hi ? 'labhi' : 'lab');
+    const hit = el('rect', { x: 0, y: yy, width: w, height: rh, class: 'hit' }, s);
+    hover(hit, `${r.name}\n${r.tipText}`);
+  });
+  txt(s, m.l, h - 8, unit, 'ax');
+}
+
+hbars('c-raw', DATA.overtakes_2023_raw.map((r, i, a) => ({
+  name: r.driver, v: r.gained, hi: r.is_ver,
+  brk: r.is_ver && i === a.length - 1
+    ? `ranks 11\u2013${DATA.overtakes_2023_ver_rank - 1} omitted`
+    : null,
+  tipText: `${r.gained} places gained \u00b7 ${r.lost} lost\nAverage grid slot: P${r.avg_grid}`
+})), 'places gained on track, 2023', v => v);
+
+hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
+  name: r.driver, v: r.ratio, hi: r.is_ver,
+  tipText: `${r.gained} gained ÷ ${r.lost} lost = ${r.ratio}:1`
+})), 'places gained per place lost, 2023', v => v.toFixed(1) + ':1');
+
+/* ---------- 4. field share ---------- */
+(() => {
+  const years = [2021, 2023, 2025, 2026];
+  const w = 1000, rowH = 92, m = { t: 8, r: 24, b: 8, l: 24 };
+  const h = m.t + years.length * rowH + m.b;
+  const s = svg('c-field', w, h);
+  const iw = w - m.l - m.r;
+  years.forEach((yr, i) => {
+    const rows = DATA.rivals[yr] || [];
+    const yy = m.t + i * rowH;
+    txt(s, m.l, yy + 18, yr, 'labhi');
+    let cx = m.l;
+    rows.forEach(r => {
+      const bw = (r.pct / 100) * iw;
+      el('rect', { x: cx, y: yy + 30, width: Math.max(bw - 2, 1), height: 26, rx: 2, fill: r.is_ver ? '--accent' : '--field', 'fill-opacity': r.is_ver ? 1 : .62 }, s);
+      if (bw > 74) txt(s, cx + 9, yy + 47, `${r.driver.split(' ').pop()} ${r.pct}%`, 'lab');
+      const hit = el('rect', { x: cx, y: yy + 30, width: Math.max(bw, 1), height: 26, class: 'hit' }, s);
+      hover(hit, `${yr} · ${r.driver}\n${r.laps_led} lead laps (${r.pct}%)`);
+      cx += bw;
+    });
+    if (cx < m.l + iw) {
+      el('rect', { x: cx, y: yy + 30, width: m.l + iw - cx, height: 26, rx: 2, fill: '--grid' }, s);
+      const hit = el('rect', { x: cx, y: yy + 30, width: m.l + iw - cx, height: 26, class: 'hit' }, s);
+      hover(hit, `${yr}\nEveryone else outside the top five`);
+    }
+    el('line', { x1: m.l, x2: w - m.r, y1: yy + 74, y2: yy + 74, class: 'gl' }, s);
+  });
+})();
+
+/* ---------- 5. the control group ---------- */
+(() => {
+  const w = 1000, ph = 150, gap = 42, m = { t: 26, r: 26, b: 34, l: 50 };
+  const h = m.t + ph * 2 + gap + m.b + 16;
+  const s = svg('c-control', w, h);
+  const iw = w - m.l - m.r;
+  const x = i => m.l + (i / (S.length - 1)) * iw;
+
+  function panel(top, key, max, title, fmt) {
+    const y = v => top + ph - (v / max) * ph;
+    txt(s, m.l, top - 9, title, 'ax');
+    [0, max / 2, max].forEach(g => {
+      el('line', { x1: m.l, x2: w - m.r, y1: y(g), y2: y(g), class: 'gl' }, s);
+      txt(s, m.l - 9, y(g) + 4, fmt(g), 'ax', 'end');
+    });
+    const pts = S.map((d, i) => [x(i), y(d[key] ?? 0)]);
+    el('polyline', {
+      points: pts.map(p => p.join(',')).join(' '), fill: 'none',
+      stroke: key === 'wins' ? '--accent' : '--field', 'stroke-width': 2,
+      'stroke-linejoin': 'round', 'stroke-linecap': 'round'
+    }, s);
+    S.forEach((d, i) => {
+      el('circle', {
+        cx: x(i), cy: y(d[key] ?? 0), r: 4.5,
+        fill: key === 'wins' ? '--accent' : '--field',
+        stroke: '--panel', 'stroke-width': 2
+      }, s);
+    });
+    return y;
+  }
+
+  panel(m.t, 'wins', 20, 'RACE WINS', v => v);
+  const top2 = m.t + ph + gap;
+  panel(top2, 'h2h_pct', 100, 'QUALIFYING WON vs TEAMMATE', v => v + '%');
+
+  S.forEach((d, i) => {
+    txt(s, x(i), h - 14, d.year, 'ax', 'middle');
+    const hit = el('rect', { x: x(i) - iw / (S.length * 2), y: m.t - 14, width: iw / (S.length - 1), height: ph * 2 + gap + 20, class: 'hit' }, s);
+    hover(hit, `${d.year}\n${d.wins} wins\nOut-qualified teammate ${d.h2h_won}/${d.h2h_n} (${d.h2h_pct}%)\nTeammate: ${d.teammates.join(', ')}`);
+  });
+})();
+
+/* ---------- 6. comeback slopes ---------- */
+(() => {
+  const rows = DATA.comebacks, w = 1000, rh = 44, m = { t: 32, r: 60, b: 20, l: 210 };
+  const h = m.t + rows.length * rh + m.b;
+  const s = svg('c-comeback', w, h);
+  const iw = w - m.l - m.r;
+  const maxP = 22;
+  const x = p => m.l + ((p - 1) / (maxP - 1)) * iw;
+  txt(s, m.l, m.t - 14, 'FINISHING POSITION', 'ax');
+  txt(s, w - m.r, m.t - 14, 'GAIN', 'ax', 'end');
+  for (let p = 1; p <= maxP; p += 3) {
+    el('line', { x1: x(p), x2: x(p), y1: m.t - 6, y2: h - m.b, class: 'gl' }, s);
+    txt(s, x(p), h - 4, 'P' + p, 'ax', 'middle');
+  }
+  rows.forEach((r, i) => {
+    const yy = m.t + i * rh + 14;
+    el('line', { x1: x(r.grid), x2: x(r.finish), y1: yy, y2: yy, stroke: '--accent', 'stroke-width': 2.5, 'stroke-linecap': 'round' }, s);
+    el('circle', { cx: x(r.grid), cy: yy, r: 5, fill: '--panel', stroke: '--accent', 'stroke-width': 2 }, s);
+    el('circle', { cx: x(r.finish), cy: yy, r: 5.5, fill: '--accent', stroke: '--panel', 'stroke-width': 2 }, s);
+    txt(s, m.l - 14, yy + 4, `${r.year}  ${r.race.replace(' Grand Prix', '')}`, 'lab', 'end');
+    txt(s, w - m.r + 44, yy + 4, `+${r.gain}`, 'labhi', 'end');
+    const hit = el('rect', { x: 0, y: yy - rh / 2, width: w, height: rh, class: 'hit' }, s);
+    hover(hit, `${r.year} ${r.race}\nStarted P${r.grid} · finished P${r.finish}\n${r.gain} places gained`);
+  });
+})();
+
+/* ---------- 7. race strip ---------- */
+(() => {
+  const T = DATA.timeline, w = 1000;
+  const years = [...new Set(T.map(d => d.year))];
+  const perRow = Math.max(...years.map(y => T.filter(d => d.year === y).length));
+  const m = { t: 14, r: 14, b: 26, l: 52 };
+  const rowH = 26, cell = (w - m.l - m.r) / perRow;
+  const h = m.t + years.length * rowH + m.b;
+  const s = svg('c-strip', w, h);
+
+  years.forEach((yr, r) => {
+    const cy = m.t + r * rowH + rowH / 2;
+    txt(s, m.l - 12, cy + 4, yr, 'ax', 'end');
+    T.filter(d => d.year === yr).forEach((d, c) => {
+      const cx = m.l + c * cell;
+      let fill = '--ink-3', op = .45, stroke = 'none';
+      if (!d.classified) { fill = 'transparent'; stroke = '--ink-3'; }
+      else if (d.finish === 1) { fill = '--accent'; op = 1; }
+      else if (d.finish <= 3) { fill = '--field'; op = .85; }
+      else if (d.points > 0) { op = .6; }
+      el('rect', { x: cx + 1, y: cy - 8, width: cell - 2, height: 16, rx: 2,
+                   fill, 'fill-opacity': op, stroke, 'stroke-width': 1 }, s);
+      const hit = el('rect', { x: cx, y: cy - rowH / 2, width: cell, height: rowH, class: 'hit' }, s);
+      hover(hit, `${d.year} ${d.race}\nStarted P${d.grid ?? '\u2014'}\n` +
+                 `${d.classified ? 'Finished P' + d.finish : 'DNF \u2014 ' + d.status}\n${d.points} pts`);
+    });
+  });
+  txt(s, m.l, h - 8, 'each mark is one grand prix, in calendar order \u2192', 'ax');
+})();
+</script>

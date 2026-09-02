@@ -1,0 +1,4 @@
+# Raw Kaggle CSVs — not redistributed; see README for the download step.
+data/raw/
+__pycache__/
+.DS_Store
