@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 
 import numpy as np
@@ -128,6 +129,33 @@ def main() -> int:
     fastest_quali = q[(q.driverId == VER) & (q.position == 1)].groupby("year").size()
     avg_quali = q[q.driverId == VER].groupby("year").position.mean()
 
+    # ---- qualifying gap to teammate, in seconds ---------------------------
+    # The head-to-head count says who was faster; this says by how much. Parse
+    # the lap strings (m:ss.mmm) in q1/q2/q3, take each driver's best of the
+    # weekend, and difference Verstappen against his teammate. Negative = MV
+    # faster. Reported as the season median so one wet outlier can't swing it.
+    def _to_seconds(t):
+        m = re.match(r"(?:(\d+):)?(\d+)\.(\d+)$", str(t).strip())
+        if not m:
+            return np.nan
+        return int(m.group(1) or 0) * 60 + int(m.group(2)) + int(m.group(3)) / 1000
+
+    qt = quali.merge(races[["raceId", "year"]], on="raceId").copy()
+    for c in ("q1", "q2", "q3"):
+        qt[c + "s"] = qt[c].map(_to_seconds)
+    qt["best"] = qt[["q1s", "q2s", "q3s"]].min(axis=1, skipna=True)
+    vqt = qt[qt.driverId == VER][["raceId", "year", "constructorId", "best"]].rename(
+        columns={"best": "ver_best"}
+    )
+    mqt = qt.merge(vqt, on=["raceId", "year", "constructorId"])
+    mqt = mqt[(mqt.driverId != VER) & mqt.best.notna() & mqt.ver_best.notna()].copy()
+    # keep the faster teammate on the rare weekend a seat was shared
+    mqt = mqt.sort_values("best").groupby(["raceId", "year"], as_index=False).first()
+    mqt["gap"] = mqt.ver_best - mqt.best
+    quali_gap = mqt.groupby("year").agg(
+        gap_median=("gap", "median"), gap_n=("gap", "size")
+    )
+
     # ---- season table ------------------------------------------------------
     seasons = []
     for yr in scored_years:
@@ -168,6 +196,13 @@ def main() -> int:
                 "h2h_won": int(hh.won) if hh is not None else 0,
                 "h2h_pct": round(float(hh.won) / float(hh.n) * 100) if hh is not None and hh.n else None,
                 "teammates": hh.mates if hh is not None else [],
+                "quali_gap_s": (
+                    round(float(quali_gap.loc[yr, "gap_median"]), 3)
+                    if yr in quali_gap.index else None
+                ),
+                "quali_gap_n": (
+                    int(quali_gap.loc[yr, "gap_n"]) if yr in quali_gap.index else 0
+                ),
             }
         )
 
@@ -215,6 +250,36 @@ def main() -> int:
         .itertuples()
     ]
 
+
+    # ---- 2025 split by half: the second-half recovery --------------------
+    # 2025 ran 24 rounds; split 1-12 / 13-24. Points include sprint points.
+    v25 = ver[ver.year == 2025]
+    led25 = (
+        laps[(laps.year == 2025) & (laps.position == 1)]
+        .merge(races[["raceId", "round"]], on="raceId")
+    )
+    led25 = led25[led25.driverId == VER]
+    spr25 = sprint.merge(races[["raceId", "year", "round"]], on="raceId")
+    spr25 = spr25[(spr25.year == 2025) & (spr25.driverId == VER)]
+    split_2025 = {"mid": 12, "halves": []}
+    for lo, hi, lab in ((1, 12, "Rounds 1–12"), (13, 24, "Rounds 13–24")):
+        d = v25[(v25["round"] >= lo) & (v25["round"] <= hi)]
+        race_pts = float(d.points.sum())
+        sp_pts = float(spr25[(spr25["round"] >= lo) & (spr25["round"] <= hi)].points.sum())
+        ll = int(len(led25[(led25["round"] >= lo) & (led25["round"] <= hi)]))
+        split_2025["halves"].append(
+            {
+                "label": lab,
+                "races": int(len(d)),
+                "wins": int((d.fin == 1).sum()),
+                "podiums": int((d.fin <= 3).sum()),
+                "dnf": int((~d.classified).sum()),
+                "points": round(race_pts + sp_pts, 1),
+                "avg_finish": round(float(d.fin.mean()), 2),
+                "avg_grid": round(float(d.grid.mean()), 2),
+                "laps_led": ll,
+            }
+        )
 
     # ---- the overtaking illusion: raw volume vs gained-per-lost -----------
     FOCUS = 2023
@@ -271,6 +336,7 @@ def main() -> int:
         "rivals": rivals,
         "timeline": timeline,
         "comebacks": comebacks,
+        "split_2025": split_2025,
         "overtakes_2023_raw": ot_rows(top_raw),
         "overtakes_2023_ratio": ot_rows(top_ratio),
         "overtakes_2023_ver_rank": ver_rank,
