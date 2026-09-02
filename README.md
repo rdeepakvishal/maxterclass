@@ -60,6 +60,19 @@ proxy — it cannot separate a pass on track from a rival's slow lap.
 that lap. The season denominator is every such lap that year, so "share of laps
 led" is comparable across seasons of different length.
 
+**Qualifying gap in seconds.** Each driver's best lap of the weekend is parsed
+from the `q1`/`q2`/`q3` time strings; Verstappen's is differenced against the
+sister car's, and the season figure is the median over weekends where both set a
+comparable time. Negative means Verstappen was quicker on aggregate. It is
+coarser than the session head-to-head (tyre/fuel state, traffic, deleted laps)
+but the direction is clear — the margin widens as the wins fall away.
+
+**The 2025 split.** 2025 ran 24 rounds; the halves are rounds 1–12 and 13–24,
+points include sprint points. The standout-drives chart records the 2025 São
+Paulo start as P19 (Ergast); Verstappen was knocked out in Q1 and started from
+the pit lane, so that grid-to-finish gain is a lower bound. All eight comeback
+drives were checked grid-and-finish against the race reports.
+
 **No telemetry.** This dataset carries timing and classification only — no
 throttle, brake or speed traces.
 
