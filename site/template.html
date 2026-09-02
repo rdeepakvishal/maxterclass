@@ -5,23 +5,12 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 
 <style>
+/* Single-theme by choice: this page is a timing screen, so it commits to the
+   dark palette in every viewer theme. One token set, no prefers-color-scheme
+   query and no [data-theme] stamps — so nothing can repaint it to light.
+   color-scheme tells the browser to render scrollbars and form UI to match. */
 :root{
-  --ground:#edeef0; --panel:#f6f7f9; --sunk:#e4e6ea;
-  --ink:#10182a; --ink-2:#4a5468; --ink-3:#78849a;
-  --rule:#d3d7de; --grid:#dfe2e8;
-  --accent:#d9540a; --field:#2a78d6;
-  --shadow:0 1px 2px rgba(16,24,42,.06);
-}
-@media (prefers-color-scheme:dark){
-  :root:where(:not([data-theme="light"])){
-    --ground:#0b1220; --panel:#121b2d; --sunk:#0e1626;
-    --ink:#eef2f8; --ink-2:#a8b4c8; --ink-3:#6f7d94;
-    --rule:#22304a; --grid:#1b2740;
-    --accent:#d95926; --field:#3987e5;
-    --shadow:none;
-  }
-}
-:root[data-theme="dark"]{
+  color-scheme: dark;
   --ground:#0b1220; --panel:#121b2d; --sunk:#0e1626;
   --ink:#eef2f8; --ink-2:#a8b4c8; --ink-3:#6f7d94;
   --rule:#22304a; --grid:#1b2740;
