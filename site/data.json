@@ -3344,6 +3344,32 @@
         "last": 2019,
         "starts": 392,
         "seasons": 20,
+        "races": [
+          {
+            "year": 2014,
+            "race": "Malaysian"
+          },
+          {
+            "year": 2015,
+            "race": "Italian"
+          },
+          {
+            "year": 2017,
+            "race": "Chinese"
+          },
+          {
+            "year": 2017,
+            "race": "Canadian"
+          },
+          {
+            "year": 2017,
+            "race": "British"
+          },
+          {
+            "year": 2019,
+            "race": "Abu Dhabi"
+          }
+        ],
         "is_ver": false
       },
       {
@@ -3353,6 +3379,32 @@
         "last": 2025,
         "starts": 245,
         "seasons": 12,
+        "races": [
+          {
+            "year": 2021,
+            "race": "Austrian"
+          },
+          {
+            "year": 2022,
+            "race": "Emilia Romagna"
+          },
+          {
+            "year": 2023,
+            "race": "Spanish"
+          },
+          {
+            "year": 2023,
+            "race": "Qatar"
+          },
+          {
+            "year": 2024,
+            "race": "Bahrain"
+          },
+          {
+            "year": 2025,
+            "race": "Azerbaijan"
+          }
+        ],
         "is_ver": true
       },
       {
@@ -3362,6 +3414,28 @@
         "last": 2004,
         "starts": 308,
         "seasons": 19,
+        "races": [
+          {
+            "year": 1994,
+            "race": "Monaco"
+          },
+          {
+            "year": 1994,
+            "race": "Canadian"
+          },
+          {
+            "year": 2002,
+            "race": "Spanish"
+          },
+          {
+            "year": 2004,
+            "race": "Australian"
+          },
+          {
+            "year": 2004,
+            "race": "Hungarian"
+          }
+        ],
         "is_ver": false
       },
       {
@@ -3371,6 +3445,24 @@
         "last": 2013,
         "starts": 300,
         "seasons": 16,
+        "races": [
+          {
+            "year": 2011,
+            "race": "Indian"
+          },
+          {
+            "year": 2012,
+            "race": "Japanese"
+          },
+          {
+            "year": 2013,
+            "race": "Singapore"
+          },
+          {
+            "year": 2013,
+            "race": "Korean"
+          }
+        ],
         "is_ver": false
       },
       {
@@ -3380,6 +3472,24 @@
         "last": 1992,
         "starts": 192,
         "seasons": 15,
+        "races": [
+          {
+            "year": 1991,
+            "race": "British"
+          },
+          {
+            "year": 1992,
+            "race": "South African"
+          },
+          {
+            "year": 1992,
+            "race": "Spanish"
+          },
+          {
+            "year": 1992,
+            "race": "British"
+          }
+        ],
         "is_ver": false
       },
       {
@@ -3389,6 +3499,24 @@
         "last": 1990,
         "starts": 162,
         "seasons": 11,
+        "races": [
+          {
+            "year": 1985,
+            "race": "Portuguese"
+          },
+          {
+            "year": 1989,
+            "race": "Spanish"
+          },
+          {
+            "year": 1990,
+            "race": "Monaco"
+          },
+          {
+            "year": 1990,
+            "race": "Italian"
+          }
+        ],
         "is_ver": false
       },
       {
@@ -3398,6 +3526,16 @@
         "last": 2016,
         "starts": 206,
         "seasons": 11,
+        "races": [
+          {
+            "year": 2016,
+            "race": "Russian"
+          },
+          {
+            "year": 2016,
+            "race": "European"
+          }
+        ],
         "is_ver": false
       },
       {
@@ -3407,6 +3545,16 @@
         "last": 1998,
         "starts": 165,
         "seasons": 11,
+        "races": [
+          {
+            "year": 1998,
+            "race": "Brazilian"
+          },
+          {
+            "year": 1998,
+            "race": "Monaco"
+          }
+        ],
         "is_ver": false
       }
     ],

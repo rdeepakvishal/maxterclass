@@ -450,6 +450,12 @@ def main() -> int:
                 # the career" — the two are easy to conflate.
                 "starts": int((results.driverId == did).sum()),
                 "seasons": int(res[res.driverId == did].year.nunique()),
+                # Chronological, so the nth block in the chart is the nth slam.
+                "races": [
+                    {"year": int(r.year), "race": r.name_race.replace(" Grand Prix", "")}
+                    for r in slams[slams.driverId == did]
+                    .sort_values("date").itertuples()
+                ],
                 "is_ver": bool(did == VER),
             }
             for did, n in slam_counts.head(8).items()

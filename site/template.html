@@ -928,16 +928,24 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
   rows.forEach((r, i) => {
     const yy = m.t + i * rh;
     txt(s, m.l - 14, yy + 24, r.driver, r.is_ver ? 'labhi' : 'lab', 'end');
+    const hit = el('rect', { x: 0, y: yy, width: w, height: rh, class: 'hit' }, s);
     for (let k = 0; k < r.slams; k++) {
       el('rect', {
         x: m.l + k * unit + 2, y: yy + 10, width: unit - 4, height: 18, rx: 2,
         fill: r.is_ver ? '--accent' : '--field', 'fill-opacity': r.is_ver ? 1 : .6
       }, s);
+      // Each block is one slam, in order — so it can name its own race.
+      const g = r.races[k];
+      if (g) {
+        const cell = el('rect', { x: m.l + k * unit, y: yy + 6, width: unit, height: 26,
+                                  class: 'hit' }, s);
+        hover(cell, `${r.driver}\nGrand slam ${k + 1} of ${r.slams}\n${g.year} ${g.race}`);
+      }
     }
     txt(s, m.l + r.slams * unit + 10, yy + 24, r.slams, r.is_ver ? 'labhi' : 'lab');
     txt(s, w - m.r + 62, yy + 24, `${r.first}\u2013${r.last}`, 'ax');
-    const hit = el('rect', { x: 0, y: yy, width: w, height: rh, class: 'hit' }, s);
-    hover(hit, `${r.driver}\n${r.slams} grand slams\nFirst ${r.first} \u00b7 last ${r.last}`);
+    const list = r.races.map(g => `  ${g.year}  ${g.race}`).join('\n');
+    hover(hit, `${r.driver} — ${r.slams} grand slams\n${list}`);
   });
   txt(s, m.l, h - 8, 'one block = one grand slam', 'ax');
 
