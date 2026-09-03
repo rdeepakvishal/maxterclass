@@ -63,7 +63,12 @@ h1,h2,h3{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;text-wrap:balance
   font-size:clamp(44px,8vw,92px); font-weight:800; line-height:.94;
   letter-spacing:-.035em; margin:18px 0 0;
 }
+.hero h1 .l1{color:var(--ink)}
 .hero h1 em{font-style:normal;color:var(--accent)}
+.hero h1 .l3{
+  color:var(--field); font-size:.6em; letter-spacing:-.02em;
+  display:inline-block; margin-top:.12em;
+}
 .dek{
   font-size:clamp(17px,2.1vw,21px); color:var(--ink-2); max-width:60ch;
   margin:24px 0 0; line-height:1.55;
@@ -146,7 +151,7 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
     <div class="hero-grid">
     <div>
     <div class="eyebrow">Formula 1 &middot; 2015&ndash;2026 &middot; 245 starts</div>
-    <h1>A decade of<br>Maxterclass.<br><em>And more to come.</em></h1>
+    <h1><span class="l1">A decade of</span><br><em>Maxterclass.</em><br><span class="l3">And more to come.</span></h1>
     <p class="dek">
       Twelve seasons, 245 starts: a 17-year-old rookie who became the most dominant
       driver of the modern era, and who kept driving at that level after the wins stopped
