@@ -445,6 +445,11 @@ def main() -> int:
                 "slams": int(n),
                 "first": int(slams[slams.driverId == did].year.min()),
                 "last": int(slams[slams.driverId == did].year.max()),
+                # Starts and seasons are career totals, so the comparison is
+                # "how many attempts did each slam take", not "how long was
+                # the career" — the two are easy to conflate.
+                "starts": int((results.driverId == did).sum()),
+                "seasons": int(res[res.driverId == did].year.nunique()),
                 "is_ver": bool(did == VER),
             }
             for did, n in slam_counts.head(8).items()

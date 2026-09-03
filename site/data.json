@@ -3342,6 +3342,8 @@
         "slams": 6,
         "first": 2014,
         "last": 2019,
+        "starts": 392,
+        "seasons": 20,
         "is_ver": false
       },
       {
@@ -3349,6 +3351,8 @@
         "slams": 6,
         "first": 2021,
         "last": 2025,
+        "starts": 245,
+        "seasons": 12,
         "is_ver": true
       },
       {
@@ -3356,6 +3360,8 @@
         "slams": 5,
         "first": 1994,
         "last": 2004,
+        "starts": 308,
+        "seasons": 19,
         "is_ver": false
       },
       {
@@ -3363,6 +3369,8 @@
         "slams": 4,
         "first": 2011,
         "last": 2013,
+        "starts": 300,
+        "seasons": 16,
         "is_ver": false
       },
       {
@@ -3370,6 +3378,8 @@
         "slams": 4,
         "first": 1991,
         "last": 1992,
+        "starts": 192,
+        "seasons": 15,
         "is_ver": false
       },
       {
@@ -3377,6 +3387,8 @@
         "slams": 4,
         "first": 1985,
         "last": 1990,
+        "starts": 162,
+        "seasons": 11,
         "is_ver": false
       },
       {
@@ -3384,6 +3396,8 @@
         "slams": 2,
         "first": 2016,
         "last": 2016,
+        "starts": 206,
+        "seasons": 11,
         "is_ver": false
       },
       {
@@ -3391,6 +3405,8 @@
         "slams": 2,
         "first": 1998,
         "last": 1998,
+        "starts": 165,
+        "seasons": 11,
         "is_ver": false
       }
     ],

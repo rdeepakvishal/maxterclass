@@ -950,10 +950,12 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
     `lap-by-lap timing, which this dataset carries in full from ${G.since} onward, so the ` +
     `1960s are out of reach: Jim Clark's all-time record of eight, set between 1962 and 1965, ` +
     `cannot be reproduced here. Races shorter than ${G.min_laps} racing laps are excluded.`;
+  const ham = rows.find(r => /Hamilton/.test(r.driver));
   document.getElementById('slams-quote').textContent =
-    `Verstappen has ${ver.slams}, from ${ver.first} to ${ver.last} — level with Hamilton, who ` +
-    `needed nineteen seasons to collect his. Only Jim Clark, in an era this data cannot see, ` +
-    `has more.`;
+    `Verstappen has ${ver.slams}, all of them between ${ver.first} and ${ver.last}. ` +
+    `Hamilton has the same ${ham.slams}, spread across ${ham.first}\u2013${ham.last} — ` +
+    `but it took him ${ham.starts} starts to Verstappen's ${ver.starts}. ` +
+    `Only Jim Clark, in an era this data cannot see, has more than either.`;
 })();
 
 /* ---------- 7. race strip ---------- */
