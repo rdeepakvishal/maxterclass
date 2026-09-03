@@ -1,7 +1,7 @@
 """Build the Verstappen-decade infographic from the Ergast/Kaggle F1 CSVs.
 
 Reads data/raw/*.csv, computes the season metrics the story needs, and injects
-them into site/template.html to produce a single self-contained site/index.html.
+them into docs/template.html to produce a single self-contained docs/index.html.
 
 Run:  python3 pipeline/build.py
 """
@@ -20,7 +20,7 @@ VER = 830                     # Max Verstappen's Ergast driverId
 START_YEAR = 2015             # his debut season
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 RAW = ROOT / "data" / "raw"
-SITE = ROOT / "site"
+SITE = ROOT / "docs"   # GitHub Pages serves main:/docs
 
 # Ergast encodes nulls as the literal two-character string \N.
 NA = ["\\N"]
@@ -527,7 +527,7 @@ def main() -> int:
                   file=sys.stderr)
     marker = "/*__DATA__*/"
     if marker not in template:
-        print(f"error: {marker} not found in site/template.html", file=sys.stderr)
+        print(f"error: {marker} not found in docs/template.html", file=sys.stderr)
         return 1
     html = template.replace(marker, json.dumps(payload, separators=(",", ":")))
     (SITE / "index.html").write_text(html)
@@ -536,7 +536,7 @@ def main() -> int:
           f"races {payload['career']['races']}  wins {payload['career']['wins']}  "
           f"poles {payload['career']['poles']}")
     print(f"VER 2023 rank by raw places gained: {ver_rank}")
-    print(f"wrote site/data.json and site/index.html ({len(html):,} bytes)")
+    print(f"wrote docs/data.json and docs/index.html ({len(html):,} bytes)")
     return 0
 
 

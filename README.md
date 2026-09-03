@@ -1,5 +1,7 @@
 # The Verstappen Decade
 
+**Live:** https://rdeepakvishal.github.io/maxterclass/
+
 A data-driven story built from the Ergast Formula 1 database: twelve seasons of
 Max Verstappen, 2015–2026, rendered as a single self-contained HTML infographic.
 
@@ -23,23 +25,33 @@ into `data/raw/`:
     pip install -r requirements.txt
     python3 pipeline/build.py
 
-This reads `data/raw/`, computes the season metrics, writes `site/data.json`,
-and injects the payload into `site/template.html` to produce a standalone
-`site/index.html` with no runtime data fetch.
+This reads `data/raw/`, computes the season metrics, writes `docs/data.json`,
+and injects the payload into `docs/template.html` to produce a standalone
+`docs/index.html` with no runtime data fetch.
 
 To preview:
 
     python3 -m http.server 8899 --directory site
 
+## Hosting
+
+`docs/index.html` is a single self-contained page — inline CSS, inline JS, the
+data payload injected at build time, and the hero image as a data URI. The only
+external request is Google Fonts. GitHub Pages serves it from `main` → `/docs`;
+`docs/.nojekyll` stops Jekyll from touching the output.
+
+After editing `docs/template.html`, run the build and commit the regenerated
+`docs/index.html` — Pages serves the committed file, it does not run the pipeline.
+
 ## Layout
 
 | Path | Purpose |
 |---|---|
-| `pipeline/build.py` | CSVs → metrics → `site/index.html` |
-| `site/template.html` | Page markup, styles, and the SVG chart code |
-| `site/data.json` | Generated payload (also inlined into the built page) |
+| `pipeline/build.py` | CSVs → metrics → `docs/index.html` |
+| `docs/template.html` | Page markup, styles, and the SVG chart code |
+| `docs/data.json` | Generated payload (also inlined into the built page) |
 
-Edit `site/template.html`, never `site/index.html` — the latter is generated and
+Edit `docs/template.html`, never `docs/index.html` — the latter is generated and
 is overwritten on every build.
 
 ## Method notes
@@ -106,6 +118,7 @@ otherwise hand Verstappen a seventh slam no record book counts. The remaining
 40 slams run 51 laps or longer, so the cut is unambiguous.
 
 **Hero artwork.** `assets/max-hero.jpg` is third-party artwork by TLDesign,
-inlined as a data URI at build time. It is gitignored rather than committed, so
-this repo does not redistribute it; the build warns and omits the image if the
-file is absent.
+inlined as a data URI at build time and credited on the page. Since the built
+`docs/index.html` carries the image regardless, the source file is committed too
+rather than gitignored — hiding it only broke the build for anyone cloning. The
+build warns and omits the image if the file is absent.

@@ -4,5 +4,3 @@ __pycache__/
 .DS_Store
 BRIEF.md
 
-# Third-party artwork (TLDesign) — used locally, not redistributed via this repo.
-assets/max-hero.jpg
