@@ -124,11 +124,12 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
 
   <header class="hero">
     <div class="eyebrow">Formula 1 &middot; 2015&ndash;2026 &middot; 245 starts</div>
-    <h1>The masterclass<br>never left.<br><em>The car did.</em></h1>
+    <h1>A decade of<br>Maxterclass.<br><em>And more to come.</em></h1>
     <p class="dek">
-      Across twelve seasons Max Verstappen went from a 17-year-old rookie to the most
-      dominant driver in modern Formula 1, and then watched the wins evaporate. The
-      instinct is to read that as decline. The lap-by-lap data says something else.
+      Twelve seasons, 245 starts: a 17-year-old rookie who became the most dominant
+      driver of the modern era, and who kept driving at that level after the wins stopped
+      arriving. This is what the lap-by-lap record shows when you measure the driver rather
+      than the result sheet.
     </p>
     <div class="stamp" id="stamp"></div>
   </header>
@@ -148,7 +149,8 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       <figcaption>
         Percentage of all lead laps in each season led by Verstappen. A lead lap is one lap
         of one race with a car classified first on that lap; the denominator is every such lap
-        in the season.
+        in the season. Bar colour encodes the same number &mdash; deepest orange is his
+        largest share, blue his smallest.
       </figcaption>
     </figure>
   </section>
@@ -220,10 +222,15 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       <div id="c-field"></div>
       <figcaption>Top five lap-leaders in each season, as a share of all lead laps that year.</figcaption>
     </figure>
-    <div class="pull">
-      <p id="split25-quote"></p>
-      <small>2025 &middot; rounds 1&ndash;12 vs 13&ndash;24</small>
+    <div class="shead" style="margin-top:64px">
+      <div class="eyebrow">2025</div>
+      <h2>The Comeback of the Lion</h2>
+      <p id="split25-lede"></p>
     </div>
+    <figure>
+      <div class="scroll"><div id="c-title25"></div></div>
+      <figcaption id="title25-cap"></figcaption>
+    </figure>
     <figure>
       <div class="legend">
         <span><i style="background:var(--field)"></i>Rounds 1&ndash;12</span>
@@ -231,7 +238,7 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       </div>
       <div class="scroll"><div id="c-split25"></div></div>
       <figcaption>
-        Verstappen's 2025, split at the mid-point of the 24-round calendar. Points include
+        Verstappen's own 2025, split at the mid-point of the 24-round calendar. Points include
         sprint points. The 2025 Qatar Grand Prix carries no grid data and is left out of the
         average-grid figure only.
       </figcaption>
@@ -269,21 +276,23 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
     </div>
     <div class="shead" style="margin-top:56px">
       <div class="eyebrow">The same variable, in seconds</div>
-      <h2>And the gap got wider</h2>
+      <h2>And by how much</h2>
       <p>
-        The head-to-head is a count &mdash; it says who was quicker, not by how much. Difference
-        the two cars' best qualifying laps every weekend and the margin doesn't just hold as the
-        wins fall away. It grows: from around a tenth in 2017 to two-thirds of a second and more
-        through 2023&ndash;2025.
+        The head-to-head is a count &mdash; it says who was quicker, not by how far. Timing the
+        two cars against each other in the same qualifying session, the margin settles at roughly
+        half a second from 2019 onward and simply stays there: 0.54s in the 19-win season of 2023,
+        0.54s again in 2025, when he won eight. It does not track the results at all. 2026 is the
+        one season that breaks the pattern.
       </p>
     </div>
     <figure>
       <div class="scroll"><div id="c-qgap"></div></div>
       <figcaption>
-        Season-median gap between Verstappen's best qualifying lap and his teammate's, in
-        seconds, parsed from the Q1&ndash;Q3 times. Bars left of the centre line are weekends
-        he was faster on aggregate. The median is used so a single wet session can't swing a
-        year. Only weekends where both cars set a comparable time are counted.
+        Season-median gap between Verstappen and his teammate, in seconds, parsed from the
+        Q1&ndash;Q3 times. Bars left of the centre line are seasons he was quicker. Both laps are
+        taken from the deepest session <em>both</em> cars ran, so a Q3 lap is never timed against
+        a Q1 lap; nothing is excluded for being a large gap. A weekend drops out only when one car
+        set no usable time at all. The median is used so a single wet session can't swing a year.
       </figcaption>
     </figure>
   </section>
@@ -327,9 +336,13 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
         <span><i style="background:var(--field)"></i>Podium</span>
         <span><i style="background:var(--ink-3)"></i>Points / classified</span>
         <span><i style="border:1px solid var(--ink-3);background:transparent"></i>Did not finish</span>
+        <span><i style="background:var(--accent);opacity:.25"></i>World championship season</span>
       </div>
       <div class="scroll"><div id="c-strip"></div></div>
-      <figcaption>Hover any mark for the race, grid slot and result.</figcaption>
+      <figcaption>
+        Hover any mark for the race, grid slot and result. Tinted rows are the four seasons he
+        won the drivers' championship, taken from his position in each year's final standings.
+      </figcaption>
     </figure>
   </section>
 
@@ -363,13 +376,16 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       win away from pole.
     </p>
     <p>
-      <b>Qualifying gap in seconds.</b> Each driver's fastest lap of the weekend is taken
-      from the <code>q1</code>/<code>q2</code>/<code>q3</code> strings and differenced against
-      the sister car's; the season figure is the median across weekends where both cars set a
-      comparable time, so one wet session cannot swing a year. It is a coarser instrument than
-      the session-by-session head-to-head &mdash; different tyre and fuel states, traffic, a
-      lap deleted for track limits &mdash; but the direction is unambiguous.
-    </p>
+      <b>Qualifying gap in seconds.</b> Both laps are taken from the deepest
+      qualifying session <em>both</em> cars ran &mdash; Q3 against Q3, Q1 against Q1 &mdash;
+      and the season figure is the median across those weekends. Nothing is dropped for being
+      a large gap; a weekend drops out only when one car set no usable time. An earlier version
+      of this chart compared each driver's best lap of the weekend, which silently timed a Q3
+      lap against a Q1 lap whenever the teammate was knocked out early. Verstappen reached a
+      deeper session than his teammate on 71% of 2025 weekends and 38% of 2024, so that method
+      inflated exactly the seasons the story leaned on: 2025 read &minus;0.805s where the
+      like-for-like figure is &minus;0.540s. The corrected series shows a margin that holds
+      near half a second rather than one that widens.</p>
     <p>
       <b>The 2025 split.</b> The season ran 24 rounds; the halves are rounds 1&ndash;12 and
       13&ndash;24. Points include sprint points. The 2025 S&atilde;o Paulo comeback in the
@@ -457,16 +473,16 @@ document.getElementById('src').textContent =
   const y = v => m.t + ih - (v / max) * ih;
   const bw = Math.min(46, (iw / S.length) - 10);
 
-  // A blue-to-orange sweep across the plot: the field's decade at the left,
-  // Verstappen's at the right. userSpaceOnUse so every bar samples the same
-  // ramp by its x position; stop-colour via style so var() still resolves.
-  const defs = el('defs', {}, s);
-  const grad = el('linearGradient', {
-    id: 'ridge-grad', gradientUnits: 'userSpaceOnUse',
-    x1: m.l, y1: 0, x2: w - m.r, y2: 0
-  }, defs);
-  el('stop', { offset: '0' }, grad).setAttribute('style', 'stop-color:var(--field)');
-  el('stop', { offset: '1' }, grad).setAttribute('style', 'stop-color:var(--accent)');
+  // Colour encodes the value, not the bar's position: the deepest orange lands
+  // on the biggest share of laps led (2023) and the smallest shares stay blue,
+  // so hue and height carry the same message.
+  const peakPct = Math.max(...S.map(d => d.pct_laps_led));
+  const BLUE = [0x39, 0x87, 0xe5], ORANGE = [0xd9, 0x59, 0x26];
+  const ramp = t => {
+    const k = Math.pow(Math.max(0, Math.min(1, t)), 0.7);  // ease so mid values separate
+    const c = BLUE.map((b, j) => Math.round(b + (ORANGE[j] - b) * k));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  };
 
   for (let g = 0; g <= 75; g += 25) {
     el('line', { x1: m.l, x2: w - m.r, y1: y(g), y2: y(g), class: 'gl' }, s);
@@ -477,7 +493,7 @@ document.getElementById('src').textContent =
     const peak = d.year === 2023;
     el('rect', {
       x: x(i) - bw / 2, y: y(v), width: bw, height: hh, rx: 2,
-      fill: 'url(#ridge-grad)', 'fill-opacity': peak ? 1 : .82
+      fill: ramp(v / peakPct), 'fill-opacity': 1
     }, s);
     txt(s, x(i), y(v) - 8, v.toFixed(1) + '%', peak ? 'labhi' : 'lab', 'middle');
     txt(s, x(i), h - 32, d.year, 'ax', 'middle');
@@ -586,10 +602,97 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
   });
 })();
 
+/* ---------- 4a. 2025 title fight: cumulative championship points ---------- */
+(() => {
+  const T = DATA.title_2025, rounds = T.rounds;
+  const w = 1000, h = 400, m = { t: 26, r: 132, b: 52, l: 54 };
+  const s = svg('c-title25', w, h);
+  const iw = w - m.l - m.r, ih = h - m.t - m.b;
+  const maxPts = Math.max(...T.drivers.flatMap(d => d.cum));
+  const top = Math.ceil(maxPts / 100) * 100;
+  const x = i => m.l + (i / (rounds.length - 1)) * iw;
+  const y = v => m.t + ih - (v / top) * ih;
+  // Verstappen in the accent; the two McLarens share the field hue, separated
+  // by a dash pattern so they are told apart without a third colour.
+  const style = d => d.is_ver
+    ? { col: '--accent', dash: null, wid: 2.6 }
+    : { col: '--field', dash: d.driver === 'Piastri' ? '5 4' : null, wid: 2 };
+
+  for (let g = 0; g <= top; g += 100) {
+    el('line', { x1: m.l, x2: w - m.r, y1: y(g), y2: y(g), class: 'gl' }, s);
+    txt(s, m.l - 10, y(g) + 4, g, 'ax', 'end');
+  }
+  rounds.forEach((r, i) => {
+    if (r % 4 === 0 || r === 1) txt(s, x(i), h - 30, 'R' + r, 'ax', 'middle');
+  });
+
+  // mark the mid-season point the split chart below uses
+  el('line', { x1: x(11), x2: x(11), y1: m.t, y2: m.t + ih, stroke: '--rule',
+               'stroke-width': 1, 'stroke-dasharray': '3 4' }, s);
+  txt(s, x(11) + 6, m.t + 12, 'mid-season', 'ax');
+
+  const ends = [];
+  T.drivers.forEach(d => {
+    const st = style(d);
+    const pts = d.cum.map((v, i) => [x(i), y(v)]);
+    const line = el('polyline', {
+      points: pts.map(q => q.join(',')).join(' '), fill: 'none', stroke: st.col,
+      'stroke-width': st.wid, 'stroke-linejoin': 'round', 'stroke-linecap': 'round'
+    }, s);
+    if (st.dash) line.setAttribute('stroke-dasharray', st.dash);
+    const last = pts[pts.length - 1];
+    el('circle', { cx: last[0], cy: last[1], r: 4.5, fill: st.col,
+                   stroke: '--panel', 'stroke-width': 2 }, s);
+    ends.push({ d, st, cx: last[0], cy: last[1], ly: last[1] });
+  });
+
+  // The three finish within 13 points of each other, so the end labels would
+  // sit on top of one another. Push them apart to a minimum spacing, keeping
+  // their vertical order, and run a leader line back to each real endpoint.
+  const GAP = 16;
+  ends.sort((a, b) => a.cy - b.cy);
+  for (let i = 1; i < ends.length; i++) {
+    if (ends[i].ly - ends[i - 1].ly < GAP) ends[i].ly = ends[i - 1].ly + GAP;
+  }
+  const drift = (ends[ends.length - 1].ly - ends[ends.length - 1].cy) / 2;
+  ends.forEach(e => { e.ly -= drift; });          // re-centre the stack on the lines
+  ends.forEach(e => {
+    if (Math.abs(e.ly - e.cy) > 1.5) {
+      el('polyline', {
+        points: `${e.cx + 5},${e.cy} ${e.cx + 9},${e.ly} ${e.cx + 13},${e.ly}`,
+        fill: 'none', stroke: e.st.col, 'stroke-width': 1, 'stroke-opacity': .55
+      }, s);
+    }
+    txt(s, e.cx + 16, e.ly + 4,
+        `${e.d.driver} ${e.d.cum[e.d.cum.length - 1]}`, e.d.is_ver ? 'labhi' : 'lab');
+  });
+
+  // one hover column per round, reporting all three drivers at that point
+  rounds.forEach((r, i) => {
+    const hit = el('rect', { x: x(i) - iw / (rounds.length * 2), y: m.t,
+                             width: iw / (rounds.length - 1), height: ih, class: 'hit' }, s);
+    const rows = T.drivers.map(d => `${d.driver}: ${d.cum[i]}`).join('\n');
+    hover(hit, `Round ${r} — ${T.races[i]}\n${rows}`);
+  });
+  txt(s, m.l, h - 8, 'cumulative championship points, sprints included', 'ax');
+
+  // caption + lede numbers, both read off the same payload
+  const ver = T.drivers.find(d => d.is_ver);
+  const others = T.drivers.filter(d => !d.is_ver);
+  const mid = 11, endI = rounds.length - 1;
+  const midGap = Math.max(...others.map(d => d.cum[mid])) - ver.cum[mid];
+  const winner = T.drivers.reduce((a, b) => (b.cum[endI] > a.cum[endI] ? b : a));
+  const finalGap = winner.cum[endI] - ver.cum[endI];
+  document.getElementById('title25-cap').textContent =
+    `Cumulative championship points across the 24 rounds of 2025, sprints included. ` +
+    `After round ${rounds[mid]} Verstappen was ${midGap} points behind the leading McLaren; ` +
+    `he finished the season ${finalGap} points off the title.`;
+})();
+
 /* ---------- 4b. the 2025 second-half recovery ---------- */
 (() => {
   const sp = DATA.split_2025.halves, [a, b] = sp;
-  document.getElementById('split25-quote').textContent =
+  document.getElementById('split25-lede').textContent =
     `Split 2025 in half. The first twelve rounds: ${a.wins} wins, ${a.podiums} podiums, ` +
     `${a.dnf === 1 ? 'one retirement' : a.dnf + ' retirements'}, an average finish of ` +
     `${a.avg_finish.toFixed(1)}. The last twelve: ${b.wins} wins, ${b.podiums} podiums, ` +
@@ -604,7 +707,7 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
     { k: 'laps_led', label: 'Laps led', fmt: v => v },
     { k: 'avg_finish', label: 'Avg finish', fmt: v => v.toFixed(2), lowerBetter: true },
   ];
-  const w = 1000, m = { t: 30, b: 34 }, colGap = 26;
+  const w = 1000, m = { t: 26, b: 52 }, colGap = 26;
   const colW = (w - colGap * (metrics.length - 1)) / metrics.length;
   const barMax = 96, baseY = m.t + barMax;
   const h = baseY + m.b;
@@ -616,14 +719,14 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
     const hi = Math.max(v1, v2) || 1;
     const bh = v => Math.max((v / hi) * barMax, 2);
     const bw = Math.min(46, colW / 2 - 8);
-    txt(s, cx + colW / 2, m.t - 12, mt.label, 'ax', 'middle');
+    txt(s, cx + colW / 2, baseY + 20, mt.label, 'ax', 'middle');
     [[v1, cx + colW / 2 - bw - 4, '--field'], [v2, cx + colW / 2 + 4, '--accent']].forEach(([v, bx, col]) => {
       el('rect', { x: bx, y: baseY - bh(v), width: bw, height: bh(v), rx: 2, fill: col,
                    'fill-opacity': col === '--field' ? .68 : 1 }, s);
-      txt(s, bx + bw / 2, baseY - bh(v) - 6, mt.fmt(v), 'lab', 'middle');
+      txt(s, bx + bw / 2, baseY - bh(v) - 7, mt.fmt(v), 'lab', 'middle');
     });
     el('line', { x1: cx + 4, x2: cx + colW - 4, y1: baseY, y2: baseY, stroke: '--rule' }, s);
-    if (mt.lowerBetter) txt(s, cx + colW / 2, baseY + 24, 'lower is better', 'ax', 'middle');
+    if (mt.lowerBetter) txt(s, cx + colW / 2, baseY + 36, 'lower is better', 'ax', 'middle');
   });
 })();
 
@@ -755,15 +858,17 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
   const h = m.t + years.length * rowH + m.b;
   const s = svg('c-strip', w, h);
 
-  const wonYear = new Set(S.filter(d => d.wins > 0).map(d => d.year));
+  // Championship seasons, taken from his position in the final standings of
+  // each year — not the seasons he merely won a race.
+  const titleYear = new Set(DATA.champion_years);
   years.forEach((yr, r) => {
     const cy = m.t + r * rowH + rowH / 2;
-    if (wonYear.has(yr)) {
-      // soft tint on the seasons he won a grand prix — subtle, not loud
+    if (titleYear.has(yr)) {
+      // soft tint on the four championship seasons — subtle, not loud
       el('rect', { x: m.l - 2, y: cy - rowH / 2 + 1, width: w - m.l - m.r + 4, height: rowH - 2,
-                   rx: 2, fill: '--accent', 'fill-opacity': .06 }, s);
+                   rx: 2, fill: '--accent', 'fill-opacity': .07 }, s);
     }
-    txt(s, m.l - 12, cy + 4, yr, wonYear.has(yr) ? 'labhi' : 'ax', 'end');
+    txt(s, m.l - 12, cy + 4, yr, titleYear.has(yr) ? 'labhi' : 'ax', 'end');
     T.filter(d => d.year === yr).forEach((d, c) => {
       const cx = m.l + c * cell;
       let fill = '--ink-3', op = .45, stroke = 'none';

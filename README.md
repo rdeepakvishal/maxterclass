@@ -60,12 +60,19 @@ proxy — it cannot separate a pass on track from a rival's slow lap.
 that lap. The season denominator is every such lap that year, so "share of laps
 led" is comparable across seasons of different length.
 
-**Qualifying gap in seconds.** Each driver's best lap of the weekend is parsed
-from the `q1`/`q2`/`q3` time strings; Verstappen's is differenced against the
-sister car's, and the season figure is the median over weekends where both set a
-comparable time. Negative means Verstappen was quicker on aggregate. It is
-coarser than the session head-to-head (tyre/fuel state, traffic, deleted laps)
-but the direction is clear — the margin widens as the wins fall away.
+**Qualifying gap in seconds.** Both laps come from the deepest qualifying
+session *both* cars ran (Q3 vs Q3, Q1 vs Q1), parsed from the `q1`/`q2`/`q3`
+strings; the season figure is the median over those weekends. Negative means
+Verstappen was quicker. Nothing is excluded for being a large gap — a weekend
+drops only when one car set no usable time.
+
+Comparing each driver's *best lap of the weekend* instead silently times a Q3
+lap against a Q1 lap whenever the teammate is eliminated early (lower fuel,
+fresher tyres, an evolved track). Verstappen reached a deeper session than his
+teammate on 71% of 2025 weekends and 38% of 2024, so that method inflated
+precisely the seasons the story leaned on: 2025 reads −0.805s best-of-weekend
+versus −0.540s like-for-like. Both are in the payload (`quali_gap_s` and
+`quali_gap_best_s`); the page uses the same-session figure.
 
 **The 2025 split.** 2025 ran 24 rounds; the halves are rounds 1–12 and 13–24,
 points include sprint points. The standout-drives chart records the 2025 São

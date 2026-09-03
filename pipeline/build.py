@@ -143,17 +143,38 @@ def main() -> int:
     qt = quali.merge(races[["raceId", "year"]], on="raceId").copy()
     for c in ("q1", "q2", "q3"):
         qt[c + "s"] = qt[c].map(_to_seconds)
-    qt["best"] = qt[["q1s", "q2s", "q3s"]].min(axis=1, skipna=True)
-    vqt = qt[qt.driverId == VER][["raceId", "year", "constructorId", "best"]].rename(
-        columns={"best": "ver_best"}
-    )
+    vqt = qt[qt.driverId == VER][
+        ["raceId", "year", "constructorId", "q1s", "q2s", "q3s"]
+    ].rename(columns={"q1s": "v1", "q2s": "v2", "q3s": "v3"})
     mqt = qt.merge(vqt, on=["raceId", "year", "constructorId"])
-    mqt = mqt[(mqt.driverId != VER) & mqt.best.notna() & mqt.ver_best.notna()].copy()
+    mqt = mqt[mqt.driverId != VER].copy()
+    mqt["v_best"] = mqt[["v1", "v2", "v3"]].min(axis=1)
+    mqt["m_best"] = mqt[["q1s", "q2s", "q3s"]].min(axis=1)
+    mqt = mqt[mqt.v_best.notna() & mqt.m_best.notna()]
     # keep the faster teammate on the rare weekend a seat was shared
-    mqt = mqt.sort_values("best").groupby(["raceId", "year"], as_index=False).first()
-    mqt["gap"] = mqt.ver_best - mqt.best
-    quali_gap = mqt.groupby("year").agg(
-        gap_median=("gap", "median"), gap_n=("gap", "size")
+    mqt = mqt.sort_values("m_best").groupby(["raceId", "year"], as_index=False).first()
+
+    def _same_session(r):
+        """Gap taken from the deepest session BOTH cars set a time in.
+
+        Comparing each driver's best lap of the weekend silently compares a Q3
+        lap against a Q1 lap whenever the teammate is eliminated early — lower
+        fuel, fresher tyres and an evolved track, worth a few tenths on its own.
+        Verstappen out-qualified his teammate into a deeper session on 71% of
+        2025 weekends and 38% of 2024, so that mismatch inflated exactly the
+        seasons the story leaned on (2025 read -0.805s; same-session is -0.540s).
+        """
+        for mine, theirs in ((r.v3, r.q3s), (r.v2, r.q2s), (r.v1, r.q1s)):
+            if pd.notna(mine) and pd.notna(theirs):
+                return mine - theirs
+        return np.nan
+
+    mqt["gap"] = mqt.apply(_same_session, axis=1)
+    mqt["gap_best_of_weekend"] = mqt.v_best - mqt.m_best
+    quali_gap = mqt.dropna(subset=["gap"]).groupby("year").agg(
+        gap_median=("gap", "median"),
+        gap_n=("gap", "size"),
+        gap_best_median=("gap_best_of_weekend", "median"),
     )
 
     # ---- season table ------------------------------------------------------
@@ -202,6 +223,10 @@ def main() -> int:
                 ),
                 "quali_gap_n": (
                     int(quali_gap.loc[yr, "gap_n"]) if yr in quali_gap.index else 0
+                ),
+                "quali_gap_best_s": (
+                    round(float(quali_gap.loc[yr, "gap_best_median"]), 3)
+                    if yr in quali_gap.index else None
                 ),
             }
         )
@@ -314,6 +339,52 @@ def main() -> int:
         top_raw = pd.concat([top_raw, by_gained[by_gained.driverId == VER]])
     top_ratio = ot.sort_values("ratio", ascending=False).head(8)
 
+    # ---- championship years, from the final standings of each season ------
+    standings = read("driver_standings").merge(
+        races[["raceId", "year", "round"]], on="raceId"
+    )
+    finals = standings[
+        standings["round"] == standings.groupby("year")["round"].transform("max")
+    ]
+    champion_years = sorted(
+        int(y) for y in finals[(finals.driverId == VER) & (finals.position == 1)].year
+    )
+
+    # ---- 2025 title fight: cumulative championship points, round by round --
+    TITLE_2025 = {VER: "Verstappen", 846: "Norris", 857: "Piastri"}
+    r25 = races[races.year == 2025][["raceId", "round", "name"]]
+    race_pts = results[["raceId", "driverId", "points"]]
+    sp_pts = sprint[["raceId", "driverId", "points"]]
+    both = pd.concat([race_pts, sp_pts])
+    both = both[both.driverId.isin(TITLE_2025)].merge(r25, on="raceId")
+    per_round = (
+        both.groupby(["driverId", "round"], as_index=False).points.sum()
+        .sort_values(["driverId", "round"])
+    )
+    per_round["cum"] = per_round.groupby("driverId").points.cumsum()
+    rounds_25 = sorted(r25["round"].unique())
+    title_2025 = {
+        "rounds": [int(r) for r in rounds_25],
+        "races": [
+            r25[r25["round"] == r].name.iloc[0].replace(" Grand Prix", "")
+            for r in rounds_25
+        ],
+        "drivers": [
+            {
+                "driver": label,
+                "is_ver": bool(did == VER),
+                "cum": [
+                    float(
+                        per_round[(per_round.driverId == did)
+                                  & (per_round["round"] <= r)].points.sum()
+                    )
+                    for r in rounds_25
+                ],
+            }
+            for did, label in TITLE_2025.items()
+        ],
+    }
+
     wins = ver[ver.fin == 1]
     payload = {
         "meta": {
@@ -336,6 +407,8 @@ def main() -> int:
         "rivals": rivals,
         "timeline": timeline,
         "comebacks": comebacks,
+        "champion_years": champion_years,
+        "title_2025": title_2025,
         "split_2025": split_2025,
         "overtakes_2023_raw": ot_rows(top_raw),
         "overtakes_2023_ratio": ot_rows(top_ratio),
