@@ -3331,6 +3331,109 @@
     2023,
     2024
   ],
+  "grand_slams": {
+    "min_laps": 20,
+    "since": 1982,
+    "total": 40,
+    "seasons_covered": 45,
+    "leaders": [
+      {
+        "driver": "Lewis Hamilton",
+        "slams": 6,
+        "first": 2014,
+        "last": 2019,
+        "is_ver": false
+      },
+      {
+        "driver": "Max Verstappen",
+        "slams": 6,
+        "first": 2021,
+        "last": 2025,
+        "is_ver": true
+      },
+      {
+        "driver": "Michael Schumacher",
+        "slams": 5,
+        "first": 1994,
+        "last": 2004,
+        "is_ver": false
+      },
+      {
+        "driver": "Sebastian Vettel",
+        "slams": 4,
+        "first": 2011,
+        "last": 2013,
+        "is_ver": false
+      },
+      {
+        "driver": "Nigel Mansell",
+        "slams": 4,
+        "first": 1991,
+        "last": 1992,
+        "is_ver": false
+      },
+      {
+        "driver": "Ayrton Senna",
+        "slams": 4,
+        "first": 1985,
+        "last": 1990,
+        "is_ver": false
+      },
+      {
+        "driver": "Nico Rosberg",
+        "slams": 2,
+        "first": 2016,
+        "last": 2016,
+        "is_ver": false
+      },
+      {
+        "driver": "Mika H\u00e4kkinen",
+        "slams": 2,
+        "first": 1998,
+        "last": 1998,
+        "is_ver": false
+      }
+    ],
+    "ver_slams": [
+      {
+        "year": 2021,
+        "race": "Austrian Grand Prix",
+        "laps": 71
+      },
+      {
+        "year": 2022,
+        "race": "Emilia Romagna Grand Prix",
+        "laps": 63
+      },
+      {
+        "year": 2023,
+        "race": "Spanish Grand Prix",
+        "laps": 66
+      },
+      {
+        "year": 2023,
+        "race": "Qatar Grand Prix",
+        "laps": 57
+      },
+      {
+        "year": 2024,
+        "race": "Bahrain Grand Prix",
+        "laps": 57
+      },
+      {
+        "year": 2025,
+        "race": "Azerbaijan Grand Prix",
+        "laps": 51
+      }
+    ],
+    "excluded": [
+      {
+        "year": 2021,
+        "race": "Belgian Grand Prix",
+        "laps": 1
+      }
+    ]
+  },
   "title_2025": {
     "rounds": [
       1,

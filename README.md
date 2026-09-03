@@ -94,3 +94,18 @@ rather than baked hex, so the charts follow a live theme change.
 
 Ergast Developer API database, via the Kaggle mirror
 `jtrotman/formula-1-race-data`. Results complete through 2026-08-23.
+
+**Grand slams.** Pole, win, fastest lap and every lap led in the same race. The
+fastest lap is derived from `lap_times` rather than Ergast's `rank` column,
+which only exists from 2004 and would have excluded Senna, Mansell and most of
+Schumacher. Lap-by-lap data is complete from 1982, so nothing earlier is
+countable — Jim Clark's all-time record of eight (1962–65) is outside it. Races
+under 20 racing laps are excluded: the 2021 Belgian GP was abandoned behind the
+safety car after one lap and satisfies "led every lap" trivially, which would
+otherwise hand Verstappen a seventh slam no record book counts. The remaining
+40 slams run 51 laps or longer, so the cut is unambiguous.
+
+**Hero artwork.** `assets/max-hero.jpg` is third-party artwork by TLDesign,
+inlined as a data URI at build time. It is gitignored rather than committed, so
+this repo does not redistribute it; the build warns and omits the image if the
+file is absent.

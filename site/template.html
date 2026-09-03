@@ -39,6 +39,26 @@ h1,h2,h3{font-family:Archivo,"Helvetica Neue",Arial,sans-serif;text-wrap:balance
 
 /* ---------- hero ---------- */
 .hero{padding:72px 0 40px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:44px;align-items:center}
+.hero-art{position:relative}
+.hero-art img{
+  display:block;width:100%;height:auto;border-radius:4px;
+  border:1px solid var(--rule);
+}
+/* the artwork is a dark poster; a soft inner edge keeps it from floating */
+.hero-art::after{
+  content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;
+  box-shadow:inset 0 0 60px 8px rgba(11,18,32,.55);
+}
+.hero-credit{
+  margin-top:8px;font-family:"IBM Plex Mono",monospace;font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);text-align:right;
+}
+@media (max-width:820px){
+  .hero-grid{grid-template-columns:1fr;gap:28px}
+  .hero-art{max-width:260px}
+  .hero-credit{text-align:left}
+}
 .hero h1{
   font-size:clamp(44px,8vw,92px); font-weight:800; line-height:.94;
   letter-spacing:-.035em; margin:18px 0 0;
@@ -87,13 +107,13 @@ svg{display:block;max-width:100%;height:auto}
 .pull small{display:block;margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 
 /* ---------- season table ---------- */
-table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;table-layout:fixed}
 th{
-  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;
-  color:var(--ink-3);font-weight:500;text-align:right;padding:0 10px 10px;border-bottom:1px solid var(--rule);
+  font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;text-align:right;padding:0 5px 10px;border-bottom:1px solid var(--rule);
 }
 th:first-child,th.l{text-align:left}
-td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums;white-space:nowrap}
+td{padding:7px 5px;text-align:right;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums;white-space:nowrap}
 td:first-child,td.l{text-align:left}
 tbody tr:hover{background:var(--sunk)}
 .yr{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--ink)}
@@ -123,6 +143,8 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
 <div class="wrap">
 
   <header class="hero">
+    <div class="hero-grid">
+    <div>
     <div class="eyebrow">Formula 1 &middot; 2015&ndash;2026 &middot; 245 starts</div>
     <h1>A decade of<br>Maxterclass.<br><em>And more to come.</em></h1>
     <p class="dek">
@@ -131,6 +153,14 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       arriving. This is what the lap-by-lap record shows when you measure the driver rather
       than the result sheet.
     </p>
+    </div>
+      <div>
+        <figure class="hero-art" style="margin:0;background:none;border:0;padding:0;box-shadow:none">
+          <img src="data:image/jpeg;base64,__HERO_IMG__" alt="Max Verstappen in Red Bull race suit and helmet, with the RB18 car below — composite poster artwork.">
+        </figure>
+        <div class="hero-credit">Artwork &middot; TLDesign</div>
+      </div>
+    </div>
     <div class="stamp" id="stamp"></div>
   </header>
 
@@ -324,6 +354,30 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
     </figure>
   </section>
 
+  <section id="slams">
+    <div class="shead">
+      <div class="eyebrow">The perfect weekend</div>
+      <h2>Six grand slams</h2>
+      <p>
+        A grand slam is the rarest thing a driver can do across a weekend: take pole, lead
+        every single lap, set the fastest lap, and win. Four boxes, one race, nothing left
+        for anyone else. <span id="slams-rarity"></span>
+      </p>
+    </div>
+    <figure>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Verstappen</span>
+        <span><i style="background:var(--field)"></i>Other drivers</span>
+      </div>
+      <div class="scroll"><div id="c-slams"></div></div>
+      <figcaption id="slams-cap"></figcaption>
+    </figure>
+    <div class="pull">
+      <p id="slams-quote"></p>
+      <small>Grand slams &middot; 1982&ndash;2026</small>
+    </div>
+  </section>
+
   <section id="strip">
     <div class="shead">
       <div class="eyebrow">Every start</div>
@@ -391,6 +445,16 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       13&ndash;24. Points include sprint points. The 2025 S&atilde;o Paulo comeback in the
       standout-drives chart is recorded by Ergast as a P19 start; he was knocked out in Q1
       and actually started from the pit lane, so that grid-to-finish gain is a floor.
+    </p>
+    <p>
+      <b>Grand slams.</b> Pole, win, fastest lap and every lap led in the same race.
+      The fastest lap is derived from the lap times rather than Ergast's <code>rank</code>
+      column, which only exists from 2004 and would have hidden Senna, Mansell and most of
+      Schumacher. Lap-by-lap data is complete from 1982, so nothing before that is countable
+      &mdash; Jim Clark's record eight are outside it. Races under 20 racing laps are excluded:
+      the 2021 Belgian Grand Prix was abandoned behind the safety car after a single lap and
+      would otherwise satisfy &ldquo;led every lap&rdquo; trivially, handing Verstappen a
+      seventh slam that no record book counts.
     </p>
     <p>
       <b>Overtakes.</b> There is no overtake column in this data. Places gained and lost are
@@ -516,14 +580,17 @@ document.getElementById('src').textContent =
     : y === 2023 ? 'peak' : y <= 2025 ? 'erosion' : 'reset';
   const t = document.getElementById('t-seasons');
   t.innerHTML = `<thead><tr>
-    <th class="l">Season</th><th class="l">Phase</th><th class="l">Team</th>
-    <th>Wins</th><th>Poles</th><th>Podiums</th><th>DNF</th><th>Finish&nbsp;rate</th>
-    <th>Avg&nbsp;grid</th><th>Avg&nbsp;finish</th><th>Laps&nbsp;led</th><th>Quali&nbsp;vs&nbsp;mate</th>
+    <th class="l" style="width:7%">Season</th><th class="l" style="width:9%">Phase</th>
+    <th class="l" style="width:15%">Team</th>
+    <th style="width:9%">Wins</th><th style="width:6%">Poles</th><th style="width:8%">Podiums</th>
+    <th style="width:5%">DNF</th><th style="width:8%">Fin&nbsp;rate</th>
+    <th style="width:7%">Avg&nbsp;grid</th><th style="width:8%">Avg&nbsp;fin</th>
+    <th style="width:8%">Laps&nbsp;led</th><th style="width:10%">Quali&nbsp;H2H</th>
   </tr></thead><tbody>` + S.map(d => `<tr class="${d.year === 2023 ? 'peak' : ''}">
     <td class="l yr">${d.year}</td>
     <td class="l era">${eraOf(d.year)}</td>
     <td class="l">${d.team}</td>
-    <td><span class="wbar" style="width:${d.wins * 2.4}px"></span>${d.wins}</td>
+    <td><span class="wbar" style="width:${d.wins * 1.7}px"></span>${d.wins}</td>
     <td>${d.poles}</td><td>${d.podiums}</td><td>${d.dnf}</td><td>${d.finish_rate.toFixed(1)}%</td>
     <td>${d.avg_grid.toFixed(1)}</td><td>${d.avg_finish.toFixed(2)}</td>
     <td>${d.pct_laps_led}%</td>
@@ -846,6 +913,47 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
     const hit = el('rect', { x: 0, y: yy - rh / 2, width: w, height: rh, class: 'hit' }, s);
     hover(hit, `${r.year} ${r.race}\nStarted P${r.grid} · finished P${r.finish}\n${r.gain} places gained`);
   });
+})();
+
+/* ---------- 6b. grand slams ---------- */
+(() => {
+  const G = DATA.grand_slams, rows = G.leaders;
+  const w = 1000, rh = 40, m = { t: 16, r: 150, b: 30, l: 190 };
+  const h = m.t + rows.length * rh + m.b;
+  const s = svg('c-slams', w, h);
+  const iw = w - m.l - m.r;
+  const max = Math.max(...rows.map(r => r.slams));
+  const unit = iw / max;                       // one box per slam, same width for all
+
+  rows.forEach((r, i) => {
+    const yy = m.t + i * rh;
+    txt(s, m.l - 14, yy + 24, r.driver, r.is_ver ? 'labhi' : 'lab', 'end');
+    for (let k = 0; k < r.slams; k++) {
+      el('rect', {
+        x: m.l + k * unit + 2, y: yy + 10, width: unit - 4, height: 18, rx: 2,
+        fill: r.is_ver ? '--accent' : '--field', 'fill-opacity': r.is_ver ? 1 : .6
+      }, s);
+    }
+    txt(s, m.l + r.slams * unit + 10, yy + 24, r.slams, r.is_ver ? 'labhi' : 'lab');
+    txt(s, w - m.r + 62, yy + 24, `${r.first}\u2013${r.last}`, 'ax');
+    const hit = el('rect', { x: 0, y: yy, width: w, height: rh, class: 'hit' }, s);
+    hover(hit, `${r.driver}\n${r.slams} grand slams\nFirst ${r.first} \u00b7 last ${r.last}`);
+  });
+  txt(s, m.l, h - 8, 'one block = one grand slam', 'ax');
+
+  document.getElementById('slams-rarity').textContent =
+    `It has happened ${G.total} times across the ${G.seasons_covered} seasons for which ` +
+    `lap-by-lap timing exists.`;
+  const ver = rows.find(r => r.is_ver);
+  document.getElementById('slams-cap').textContent =
+    `Pole, fastest lap, every lap led, and the win — all four in the same race. Computed from ` +
+    `lap-by-lap timing, which this dataset carries in full from ${G.since} onward, so the ` +
+    `1960s are out of reach: Jim Clark's all-time record of eight, set between 1962 and 1965, ` +
+    `cannot be reproduced here. Races shorter than ${G.min_laps} racing laps are excluded.`;
+  document.getElementById('slams-quote').textContent =
+    `Verstappen has ${ver.slams}, from ${ver.first} to ${ver.last} — level with Hamilton, who ` +
+    `needed nineteen seasons to collect his. Only Jim Clark, in an era this data cannot see, ` +
+    `has more.`;
 })();
 
 /* ---------- 7. race strip ---------- */

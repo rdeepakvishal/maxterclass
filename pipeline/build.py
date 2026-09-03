@@ -7,6 +7,7 @@ Run:  python3 pipeline/build.py
 """
 from __future__ import annotations
 
+import base64
 import json
 import pathlib
 import re
@@ -385,6 +386,82 @@ def main() -> int:
         ],
     }
 
+    # ---- grand slams: pole + win + fastest lap + led every lap -------------
+    # Lap-by-lap data is complete from 1982, so this is computable for Senna,
+    # Prost, Mansell and Schumacher as well as the modern era — but NOT before
+    # 1982, which is why Jim Clark's all-time record of eight cannot appear here.
+    # The fastest lap is derived from lap_times rather than results.rank, which
+    # only exists from 2004 and so would silently exclude three decades.
+    SLAM_MIN_LAPS = 20
+    lap_era = lap_times.merge(races[["raceId", "year", "name"]], on="raceId")
+    lap_era = lap_era[lap_era.year >= 1982]
+    race_laps = lap_era.groupby("raceId").lap.max().rename("n_laps")
+    leader = (
+        lap_era[lap_era.position == 1]
+        .groupby(["raceId", "driverId"]).lap.agg(["count", "min", "max"])
+        .join(race_laps, on="raceId")
+    )
+    leader["led_all"] = (
+        (leader["count"] == leader.n_laps)
+        & (leader["min"] == 1)
+        & (leader["max"] == leader.n_laps)
+    )
+    led_all = leader[leader.led_all].reset_index()[["raceId", "driverId"]]
+    led_all["led_all"] = True
+    fastest = lap_era.loc[lap_era.groupby("raceId").milliseconds.idxmin()][
+        ["raceId", "driverId"]
+    ].assign(fastest=True)
+
+    slam_src = res[res.year >= 1982].copy()
+    slam_src["won"] = slam_src.positionText.astype(str) == "1"
+    slam_src = (
+        slam_src.merge(led_all, on=["raceId", "driverId"], how="left")
+        .merge(fastest, on=["raceId", "driverId"], how="left")
+        .merge(race_laps, on="raceId", how="left")
+    )
+    for col in ("led_all", "fastest"):
+        slam_src[col] = slam_src[col].notna() & (slam_src[col] == True)  # noqa: E712
+    # A race abandoned behind the safety car satisfies "led every lap" trivially:
+    # Spa 2021 ran a single lap in this data and would otherwise score as a slam
+    # for Verstappen. Real slams in the era run 51+ laps, so the cut is clean.
+    slam_src["short_race"] = slam_src.n_laps < SLAM_MIN_LAPS
+    slam_src["slam"] = (
+        slam_src.won
+        & (slam_src.grid == 1)
+        & slam_src.led_all
+        & slam_src.fastest
+        & ~slam_src.short_race
+    )
+    slams = slam_src[slam_src.slam]
+    slam_counts = slams.groupby("driverId").size().sort_values(ascending=False)
+    grand_slams = {
+        "min_laps": SLAM_MIN_LAPS,
+        "since": 1982,
+        "total": int(len(slams)),
+        "seasons_covered": int(res[res.year >= 1982].year.nunique()),
+        "leaders": [
+            {
+                "driver": name_of[did],
+                "slams": int(n),
+                "first": int(slams[slams.driverId == did].year.min()),
+                "last": int(slams[slams.driverId == did].year.max()),
+                "is_ver": bool(did == VER),
+            }
+            for did, n in slam_counts.head(8).items()
+        ],
+        "ver_slams": [
+            {"year": int(r.year), "race": r.name_race, "laps": int(r.n_laps)}
+            for r in slams[slams.driverId == VER].sort_values("date").itertuples()
+        ],
+        "excluded": [
+            {"year": int(r.year), "race": r.name_race, "laps": int(r.n_laps)}
+            for r in slam_src[
+                slam_src.won & (slam_src.grid == 1) & slam_src.led_all
+                & slam_src.fastest & slam_src.short_race
+            ].itertuples()
+        ],
+    }
+
     wins = ver[ver.fin == 1]
     payload = {
         "meta": {
@@ -408,6 +485,7 @@ def main() -> int:
         "timeline": timeline,
         "comebacks": comebacks,
         "champion_years": champion_years,
+        "grand_slams": grand_slams,
         "title_2025": title_2025,
         "split_2025": split_2025,
         "overtakes_2023_raw": ot_rows(top_raw),
@@ -424,6 +502,18 @@ def main() -> int:
     (SITE / "data.json").write_text(json.dumps(payload, indent=2))
 
     template = (SITE / "template.html").read_text()
+
+    # Inline the hero artwork as a data URI: the published page must be
+    # self-contained, and its CSP blocks external image hosts.
+    hero = ROOT / "assets" / "max-hero.jpg"
+    if "__HERO_IMG__" in template:
+        if hero.exists():
+            template = template.replace(
+                "__HERO_IMG__", base64.b64encode(hero.read_bytes()).decode()
+            )
+        else:
+            print(f"warning: {hero} missing — hero image will not render",
+                  file=sys.stderr)
     marker = "/*__DATA__*/"
     if marker not in template:
         print(f"error: {marker} not found in site/template.html", file=sys.stderr)
