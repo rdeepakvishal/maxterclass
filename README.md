@@ -129,11 +129,21 @@ inlined as a data URI at build time and credited on the page. Since the built
 rather than gitignored — hiding it only broke the build for anyone cloning. The
 build warns and omits the image if the file is absent.
 
-**Cross-era comparisons.** The parallel-coordinates chart uses rates, not
-totals, and only measures that survive an era comparison. Two candidates were
-dropped after checking: *finishing rate*, because Senna's 67% against Hamilton's
-92% measures the reliability of their eras rather than the drivers; and the
-*teammate qualifying head-to-head*, because Ergast's `qualifying` table starts
-in 1994 and is patchy to 2000 — Senna has 3 qualifying rows against 162 starts,
-and Prost has none. Pole rate is therefore taken from the grid, which every era
-has, rather than from the qualifying table.
+**Cross-era comparisons.** The parallel-coordinates chart covers the 30
+winningest drivers in F1 history, 1950-2026, on six axes. Every axis is anchored
+at zero with a dynamic top, so height is a driver's share of the group's best
+and means the same thing on each axis.
+
+Axes were chosen for era-completeness. Pole rate comes from the starting grid,
+not the `qualifying` table, which begins in 1994 and is patchy to 2000 (Senna
+has 3 qualifying rows against 162 starts; Prost has none). Two measures were
+excluded outright: *finishing rate*, because Senna's 67% against Hamilton's 92%
+tracks the reliability of their eras rather than the drivers; and *laps led*,
+because lap timing starts in 1982 and eight of the thirty raced entirely before
+it.
+
+One axis carries a known bias and says so on the page: *points finishes*. The
+scoring system paid the top 5 in the 1950s, top 6 to 2002, top 8 to 2009 and
+top 10 since 2010, so modern drivers have twice the scoring positions Clark or
+Fangio did. Swap it for a fixed-threshold measure (e.g. share of races finished
+in the top 6) in `pipeline/build.py` if you want an era-neutral version.

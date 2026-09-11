@@ -395,31 +395,40 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
 
   <section id="profile">
     <div class="shead">
-      <div class="eyebrow">Seven careers, five measures</div>
+      <div class="eyebrow">Thirty careers, six measures</div>
       <h2>The shape of a great</h2>
       <p>
-        Career totals flatter whoever raced longest, so every measure here is a rate. Each
-        driver is one line crossing five axes &mdash; the shape it traces is their profile.
-        Lines that run parallel are alike; a line that crosses the others is a driver who was
-        great in a different way.
+        The thirty winningest drivers in the history of the sport, Fangio to Verstappen, each
+        drawn as one line across six axes. Career totals flatter whoever raced longest, so five
+        of the six are rates. Lines that run parallel are alike; a line that crosses the others
+        belongs to someone who was great in a different way.
+      </p>
+      <p class="note" style="margin-top:6px">
+        <b>Drag downward on any axis</b> to keep only the drivers inside that band &mdash; brush
+        several axes to intersect them. Click an axis to clear it. Hover a line to read one
+        driver's numbers.
       </p>
     </div>
     <figure>
       <div class="legend">
         <span><i style="background:var(--accent)"></i>Verstappen</span>
-        <span><i style="background:var(--field)"></i>The others</span>
-        <span style="color:var(--ink-3)">Hover a line to isolate it</span>
+        <span><i style="background:var(--field)"></i>The other 29</span>
       </div>
       <div class="scroll"><div id="c-profile"></div></div>
       <figcaption>
-        Each axis is scaled independently between its own lowest and highest value, so a line
-        near the top of an axis is the best of this group on that measure &mdash; not a fixed
-        percentage. Rates are career-long. Laps led is the share of racing laps spent in front,
-        countable from 1982, which trims Prost's first two seasons.
-        <b>Two axes were deliberately left out:</b> finishing rate, because Senna's 67% against
-        Hamilton's 92% measures the reliability of their eras rather than the drivers; and the
-        teammate qualifying head-to-head, because Ergast's qualifying table starts in 1994 and
-        Senna has three qualifying entries against 162 starts.
+        Every axis starts at zero and tops out at the highest value among these thirty, so a
+        line's height is that driver's share of the group's best and means the same thing on
+        each axis. Pole rate is taken from the starting grid, which every era records, rather
+        than the qualifying table, which begins in 1994.
+        <b>Read the points-finishes axis with care:</b> the scoring system paid the top five in
+        the 1950s, the top six until 2002, the top eight to 2009 and the top ten since 2010, so
+        a modern driver has twice as many scoring positions available as Clark or Fangio did.
+        That axis measures the rules as much as the driver.
+        <b>Two axes were left out entirely.</b> Finishing rate, because Senna's 67% against
+        Hamilton's 92% measures the reliability of their eras, not the men driving; and laps
+        led, because lap-by-lap timing only starts in 1982 and eight of these thirty &mdash;
+        Fangio, Ascari, Clark, Moss, Brabham, Graham Hill, Stewart and Fittipaldi &mdash; raced
+        entirely before it.
       </figcaption>
     </figure>
     <div class="pull">
@@ -1028,101 +1037,182 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
 /* ---------- 6c. parallel coordinates: the shape of a great ---------- */
 (() => {
   const P = DATA.driver_profiles, AX = DATA.profile_axes;
-  const w = 1000, h = 430, m = { t: 52, r: 96, b: 62, l: 96 };
+  const w = 1000, h = 520, m = { t: 62, r: 128, b: 86, l: 40 };
   const s = svg('c-profile', w, h);
   const iw = w - m.l - m.r, ih = h - m.t - m.b;
   const ax = i => m.l + (i / (AX.length - 1)) * iw;
 
-  // Each axis is normalised to its own range across this group, which is what
-  // makes the crossings meaningful — a line that dives is losing rank, not
-  // losing percentage points.
-  const range = {};
+  // Every axis is anchored at zero with a dynamic top, so a line's height is
+  // that driver's share of the best in this group and vertical position means
+  // the same thing on all six. Min-max normalisation would spread the lines
+  // further, but its floor is arbitrary — the weakest driver in the pool —
+  // which quietly exaggerates the gaps.
+  const rng = {};
   AX.forEach(a => {
-    const vs = P.map(d => d[a.key]);
-    range[a.key] = { lo: Math.min(...vs), hi: Math.max(...vs) };
+    rng[a.key] = { lo: 0, hi: Math.max(...P.map(d => d[a.key])) };
   });
-  const y = (a, v) => {
-    const { lo, hi } = range[a.key];
+  const yOf = (a, v) => {
+    const { lo, hi } = rng[a.key];
     return m.t + ih - (hi === lo ? .5 : (v - lo) / (hi - lo)) * ih;
+  };
+  const valAt = (a, y) => {
+    const { lo, hi } = rng[a.key];
+    return lo + ((m.t + ih - y) / ih) * (hi - lo);
   };
 
   AX.forEach((a, i) => {
-    el('line', { x1: ax(i), x2: ax(i), y1: m.t - 10, y2: m.t + ih + 10, stroke: '--rule' }, s);
-    txt(s, ax(i), m.t - 38, a.label.toUpperCase(), 'ax', 'middle');
-    txt(s, ax(i), m.t - 18, `${range[a.key].hi}${a.unit}`, 'ax', 'middle');
-    txt(s, ax(i), m.t + ih + 26, `${range[a.key].lo}${a.unit}`, 'ax', 'middle');
+    el('line', { x1: ax(i), x2: ax(i), y1: m.t, y2: m.t + ih, stroke: '--rule' }, s);
+    txt(s, ax(i), m.t - 34, a.label.toUpperCase(), 'ax', 'middle');
+    txt(s, ax(i), m.t - 14, `${rng[a.key].hi}${a.unit}`, 'ax', 'middle');
+    txt(s, ax(i), m.t + ih + 20, `${rng[a.key].lo}${a.unit}`, 'ax', 'middle');
   });
 
-  const paths = [];
-  P.forEach(d => {
-    const pts = AX.map((a, i) => [ax(i), y(a, d[a.key])]);
+  const rows = P.map(d => {
+    const pts = AX.map((a, i) => [ax(i), yOf(a, d[a.key])]);
     const line = el('polyline', {
       points: pts.map(q => q.join(',')).join(' '), fill: 'none',
       stroke: d.is_ver ? '--accent' : '--field',
-      'stroke-width': d.is_ver ? 3 : 1.8,
-      'stroke-opacity': d.is_ver ? 1 : .45,
+      'stroke-width': d.is_ver ? 3 : 1.4,
       'stroke-linejoin': 'round', 'stroke-linecap': 'round'
     }, s);
-    pts.forEach(q => el('circle', {
-      cx: q[0], cy: q[1], r: d.is_ver ? 4 : 3,
-      fill: d.is_ver ? '--accent' : '--field',
-      'fill-opacity': d.is_ver ? 1 : .5, stroke: '--panel', 'stroke-width': 1.5
-    }, s));
-    paths.push({ d, line, endY: pts[pts.length - 1][1], endLab: null });
-  });
-
-  // Ties on the final axis (three drivers share four titles) would stack the
-  // name labels on top of each other, so spread them and run a leader line back.
-  const GAP = 15, lx = ax(AX.length - 1);
-  const order = [...paths].sort((a, b) => a.endY - b.endY);
-  order.forEach((e, i) => { e.ly = e.endY; });
-  for (let i = 1; i < order.length; i++) {
-    if (order[i].ly - order[i - 1].ly < GAP) order[i].ly = order[i - 1].ly + GAP;
-  }
-  const shift = (order[order.length - 1].ly - order[order.length - 1].endY) / 2;
-  order.forEach(e => { e.ly -= shift; });
-  order.forEach(e => {
-    if (Math.abs(e.ly - e.endY) > 1.5) {
-      el('polyline', {
-        points: `${lx + 5},${e.endY} ${lx + 9},${e.ly} ${lx + 13},${e.ly}`,
-        fill: 'none', stroke: e.d.is_ver ? '--accent' : '--field', 'stroke-width': 1,
-        'stroke-opacity': .5
-      }, s);
-    }
-    e.endLab = txt(s, lx + 16, e.ly + 4, e.d.last, e.d.is_ver ? 'labhi' : 'lab');
-  });
-
-  // Hover isolates one profile; the label row below reports its actual numbers.
-  const readout = txt(s, m.l, h - 10, '', 'lab');
-  const setFocus = who => {
-    paths.forEach(({ d, line, endLab }) => {
-      const on = !who || d === who;
-      line.setAttribute('stroke-opacity', on ? (d.is_ver ? 1 : .85) : .08);
-      line.setAttribute('stroke-width', on && d === who ? 3.4 : (d.is_ver ? 3 : 1.8));
-      endLab.setAttribute('opacity', on ? 1 : .18);
-    });
-    readout.textContent = who
-      ? `${who.driver} · ${who.span} · ${who.starts} starts — ` +
-        AX.map(a => `${a.label} ${who[a.key]}${a.unit}`).join('  ·  ')
-      : '';
-  };
-  paths.forEach(({ d, line }) => {
-    line.style.cursor = 'crosshair';
     line.setAttribute('pointer-events', 'stroke');
-    line.addEventListener('mouseenter', () => setFocus(d));
-    line.addEventListener('mouseleave', () => setFocus(null));
-    hover(line, `${d.driver}\n${d.span} · ${d.starts} starts\n` +
-                AX.map(a => `${a.label}: ${d[a.key]}${a.unit}`).join('\n'));
+    line.style.cursor = 'crosshair';
+    return { d, line, endY: pts[pts.length - 1][1], lab: null };
   });
+
+  // Thirty names down one edge is noise, so labels are selective and dynamic:
+  // Verstappen plus the leaders by default, and exactly the brushed set once a
+  // filter narrows things down — which makes the brush reveal who survived.
+  const lx = ax(AX.length - 1), GAP = 15;
+  const TOP = new Set(
+    [...P].sort((a, b) => b.win - a.win).slice(0, 7).map(d => d.driver)
+  );
+  rows.forEach(r => {
+    r.leader = el('polyline', { points: '0,0', fill: 'none',
+      stroke: r.d.is_ver ? '--accent' : '--field', 'stroke-width': 1 }, s);
+    r.lab = txt(s, lx + 15, 0, r.d.last, r.d.is_ver ? 'labhi' : 'lab');
+    r.lab.setAttribute('font-size', r.d.is_ver ? '12' : '10.5');
+  });
+
+  function layoutLabels(shown) {
+    rows.forEach(r => {
+      const on = shown.has(r.d);
+      r.lab.setAttribute('visibility', on ? 'visible' : 'hidden');
+      r.leader.setAttribute('visibility', on ? 'visible' : 'hidden');
+    });
+    const vis = rows.filter(r => shown.has(r.d)).sort((a, b) => a.endY - b.endY);
+    if (!vis.length) return;
+    vis.forEach(e => { e.ly = e.endY; });
+    for (let i = 1; i < vis.length; i++)
+      if (vis[i].ly - vis[i - 1].ly < GAP) vis[i].ly = vis[i - 1].ly + GAP;
+    const drift = (vis[vis.length - 1].ly - vis[vis.length - 1].endY) / 2;
+    const top = m.t - 4, bot = m.t + ih + 4;
+    let off = -drift;
+    if (vis[0].ly + off < top) off = top - vis[0].ly;
+    if (vis[vis.length - 1].ly + off > bot) off = bot - vis[vis.length - 1].ly;
+    vis.forEach(e => {
+      e.ly += off;
+      e.lab.setAttribute('y', e.ly + 3.5);
+      e.leader.setAttribute('points',
+        `${lx + 4},${e.endY} ${lx + 8},${e.ly} ${lx + 12},${e.ly}`);
+    });
+  }
+
+  // ---- brushing -----------------------------------------------------------
+  const brushes = {};                       // axis key -> [lo, hi] in data space
+  const readout = txt(s, m.l, h - 48, '', 'lab');
+  const hint = txt(s, m.l, h - 30, 'Drag down an axis to filter \u00b7 click an axis to clear it', 'ax');
+  let hovered = null;
+
+  const passes = d => AX.every(a => {
+    const b = brushes[a.key];
+    return !b || (d[a.key] >= b[0] && d[a.key] <= b[1]);
+  });
+  const anyBrush = () => AX.some(a => brushes[a.key]);
+
+  function render() {
+    const sel = P.filter(passes);
+    rows.forEach(r => {
+      const ok = passes(r.d);
+      const focus = hovered && r.d === hovered;
+      const dim = (hovered && !focus) || !ok;
+      r.line.setAttribute('stroke-opacity', dim ? .06 : (r.d.is_ver || focus ? 1 : .5));
+      r.line.setAttribute('stroke-width', focus ? 3.4 : (r.d.is_ver ? 3 : 1.4));
+      r.lab.setAttribute('opacity', dim ? .12 : 1);
+      r.leader.setAttribute('stroke-opacity', dim ? .12 : .5);
+    });
+    const shown = new Set();
+    if (hovered) shown.add(hovered);
+    else if (anyBrush() && sel.length <= 12) sel.forEach(d => shown.add(d));
+    else { P.forEach(d => { if (d.is_ver || TOP.has(d.driver)) shown.add(d); }); }
+    layoutLabels(shown);
+
+    readout.textContent = hovered
+      ? `${hovered.driver} \u00b7 ${hovered.span} \u00b7 ` +
+        AX.map(a => `${a.label} ${hovered[a.key]}${a.unit}`).join('  \u00b7  ')
+      : anyBrush()
+        ? `${sel.length} of ${P.length} drivers: ${sel.map(d => d.last).join(', ')}`
+        : `${P.length} drivers, 1950\u20132026`;
+  }
+
+  AX.forEach((a, i) => {
+    const track = el('rect', { x: ax(i) - 11, y: m.t, width: 22, height: ih,
+                               fill: 'transparent' }, s);
+    track.style.cursor = 'ns-resize';
+    const band = el('rect', { x: ax(i) - 9, y: m.t, width: 18, height: 0, rx: 2,
+                              fill: '--accent', 'fill-opacity': .22,
+                              stroke: '--accent', 'stroke-opacity': .5 }, s);
+    band.setAttribute('visibility', 'hidden');
+    band.setAttribute('pointer-events', 'none');
+
+    const toY = evt => {
+      const pt = s.createSVGPoint();
+      pt.x = evt.clientX; pt.y = evt.clientY;
+      const local = pt.matrixTransform(s.getScreenCTM().inverse());
+      return Math.max(m.t, Math.min(m.t + ih, local.y));
+    };
+    let y0 = null, moved = false;
+    track.addEventListener('mousedown', e => { y0 = toY(e); moved = false; e.preventDefault(); });
+    const onMove = e => {
+      if (y0 === null) return;
+      const y1 = toY(e);
+      if (Math.abs(y1 - y0) > 3) moved = true;
+      band.setAttribute('visibility', 'visible');
+      band.setAttribute('y', Math.min(y0, y1));
+      band.setAttribute('height', Math.abs(y1 - y0));
+      const v0 = valAt(a, Math.min(y0, y1)), v1 = valAt(a, Math.max(y0, y1));
+      brushes[a.key] = [Math.min(v0, v1), Math.max(v0, v1)];
+      render();
+    };
+    const onUp = () => {
+      if (y0 === null) return;
+      if (!moved) {                       // a click clears this axis
+        delete brushes[a.key];
+        band.setAttribute('visibility', 'hidden');
+        render();
+      }
+      y0 = null;
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  });
+
+  rows.forEach(r => {
+    r.line.addEventListener('mouseenter', () => { hovered = r.d; render(); });
+    r.line.addEventListener('mouseleave', () => { hovered = null; render(); });
+    hover(r.line, `${r.d.driver}\n${r.d.span} \u00b7 ${r.d.starts} starts\n` +
+                  AX.map(a => `${a.label}: ${r.d[a.key]}${a.unit}`).join('\n'));
+  });
+  render();
 
   const ver = P.find(d => d.is_ver);
   const rank = k => [...P].sort((a, b) => b[k] - a[k]).findIndex(d => d.is_ver) + 1;
   const ord = n => n + (['th','st','nd','rd'][(n % 100 - 20) % 10] || ['th','st','nd','rd'][n % 100] || 'th');
   document.getElementById('profile-quote').textContent =
-    `Verstappen's line tracks Schumacher's almost exactly — ${ord(rank('win'))} on win rate, ` +
-    `${ord(rank('podium'))} on podium rate, ${ord(rank('led'))} on laps led — from ${ver.starts} starts, ` +
-    `fewer than any of them except Senna. Senna is the line that crosses everyone: the highest ` +
-    `pole rate and the most laps led of the seven, and the fewest titles of the front four.`;
+    `Across the thirty winningest drivers in the sport's history, Verstappen ranks ` +
+    `${ord(rank('win'))} on win rate and ${ord(rank('podium'))} on podium rate. The three ` +
+    `names above him on win rate — Fangio, Ascari, Clark — all raced before 1970, when a ` +
+    `season was nine races long and the field was a fraction of today's.`;
 })();
 
 /* ---------- 7. race strip ---------- */

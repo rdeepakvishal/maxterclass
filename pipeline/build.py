@@ -474,31 +474,32 @@ def main() -> int:
     }
 
     # ---- driver profiles for the parallel-coordinates chart ---------------
-    # Axes are deliberately restricted to measures that survive a cross-era
-    # comparison. Two candidates were dropped after checking the data:
-    #   * finish rate — Senna 67% vs Hamilton 92% is the reliability of the era,
-    #     not the driver, so it would read as a skill axis and mislead.
-    #   * teammate qualifying H2H — the qualifying table only begins in 1994 and
-    #     is patchy to 2000. Senna has 3 qualifying rows against 162 starts, so
-    #     his "100%" came from three weekends. Prost has none at all.
-    # Pole rate is taken from the grid (available for every era), not from the
-    # qualifying table, for the same reason.
-    PROFILE_DRIVERS = [830, 30, 1, 102, 117, 20, 4]   # VER MSC HAM SEN PRO VET ALO
-    prof_lap = lap_times.merge(races[["raceId", "year"]], on="raceId")
-    prof_lap = prof_lap[prof_lap.year >= 1982]
-    led_laps = prof_lap[prof_lap.position == 1].groupby("driverId").size()
-    run_laps = prof_lap.groupby("driverId").size()
+    # Pool: the 30 winningest drivers in F1 history, so the chart spans Fangio
+    # to Verstappen rather than one era.
+    #
+    # Every axis here is complete for 1950-2026, which is why "laps led" is NOT
+    # among them: lap-by-lap timing only begins in 1982, and eight of these
+    # thirty (Fangio, Ascari, Clark, Moss, Brabham, Graham Hill, Stewart,
+    # Fittipaldi) raced entirely before it. Including it would either exclude
+    # them or leave holes, and a brush over a half-empty axis means nothing.
+    #
+    # Pole rate comes from the grid, not the qualifying table, which starts in
+    # 1994 and is patchy to 2000.
+    PROFILE_N = 30
+    win_counts = res[res.fin == 1].groupby("driverId").size()
+    pool = list(win_counts.nlargest(PROFILE_N).index)
     titles = finals[finals.position == 1].groupby("driverId").size()
 
     profile_axes = [
         {"key": "win", "label": "Win rate", "unit": "%"},
         {"key": "pole", "label": "Pole rate", "unit": "%"},
         {"key": "podium", "label": "Podium rate", "unit": "%"},
-        {"key": "led", "label": "Laps led", "unit": "%"},
+        {"key": "points", "label": "Points finishes", "unit": "%"},
         {"key": "titles", "label": "Titles", "unit": ""},
+        {"key": "starts", "label": "Starts", "unit": ""},
     ]
     driver_profiles = []
-    for did in PROFILE_DRIVERS:
+    for did in pool:
         x = res[res.driverId == did]
         if x.empty:
             continue
@@ -507,13 +508,18 @@ def main() -> int:
             "last": name_of[did].split()[-1],
             "starts": int(len(x)),
             "span": f"{int(x.year.min())}\u2013{int(x.year.max())}",
+            "era": int(x.year.min()),
             "is_ver": bool(did == VER),
             "win": round(float((x.fin == 1).mean()) * 100, 1),
             "pole": round(float((x.grid == 1).mean()) * 100, 1),
             "podium": round(float((x.fin <= 3).mean()) * 100, 1),
-            "led": round(float(led_laps.get(did, 0)) / max(int(run_laps.get(did, 1)), 1) * 100, 1),
+            # Era caveat, stated on the page: the scoring system paid the top 5
+            # in the 1950s, top 6 to 2002, top 8 to 2009 and top 10 since 2010,
+            # so this axis structurally favours modern drivers.
+            "points": round(float((x.points > 0).mean()) * 100, 1),
             "titles": int(titles.get(did, 0)),
         })
+    driver_profiles.sort(key=lambda r: -r["win"])
 
     wins = ver[ver.fin == 1]
     payload = {
