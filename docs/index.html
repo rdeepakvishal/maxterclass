@@ -398,7 +398,7 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       <div class="eyebrow">Thirty careers, six measures</div>
       <h2>The shape of a great</h2>
       <p>
-        The thirty winningest drivers in the history of the sport, Fangio to Verstappen, each
+        The thirty all-time leading race winners, Fangio to Verstappen, each
         drawn as one line across six axes. The axes run in order of rarity &mdash; turning up,
         scoring, the podium, pole, the win, the title &mdash; so a line that stays high all the
         way across belongs to someone who converted starts into everything else. Career totals
@@ -1228,7 +1228,7 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
   const rank = k => [...P].sort((a, b) => b[k] - a[k]).findIndex(d => d.is_ver) + 1;
   const ord = n => n + (['th','st','nd','rd'][(n % 100 - 20) % 10] || ['th','st','nd','rd'][n % 100] || 'th');
   document.getElementById('profile-quote').textContent =
-    `Across the thirty winningest drivers in the sport's history, Verstappen ranks ` +
+    `Across the top thirty by career wins, Verstappen ranks ` +
     `${ord(rank('win'))} on win rate and ${ord(rank('podium'))} on podium rate. The three ` +
     `names above him on win rate — Fangio, Ascari, Clark — all raced before 1970, when a ` +
     `season was nine races long and the field was a fraction of today's.`;

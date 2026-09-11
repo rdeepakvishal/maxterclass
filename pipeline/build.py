@@ -474,7 +474,7 @@ def main() -> int:
     }
 
     # ---- driver profiles for the parallel-coordinates chart ---------------
-    # Pool: the 30 winningest drivers in F1 history, so the chart spans Fangio
+    # Pool: the 30 all-time leading race winners, so the chart spans Fangio
     # to Verstappen rather than one era.
     #
     # Every axis here is complete for 1950-2026, which is why "laps led" is NOT

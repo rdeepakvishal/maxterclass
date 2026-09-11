@@ -130,7 +130,7 @@ rather than gitignored — hiding it only broke the build for anyone cloning. Th
 build warns and omits the image if the file is absent.
 
 **Cross-era comparisons.** The parallel-coordinates chart covers the 30
-winningest drivers in F1 history, 1950-2026, on six axes. Every axis is anchored
+all-time leading race winners, 1950-2026, on six axes. Every axis is anchored
 at zero with a dynamic top, so height is a driver's share of the group's best
 and means the same thing on each axis.
 
