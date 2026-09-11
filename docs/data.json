@@ -3600,13 +3600,13 @@
   },
   "profile_axes": [
     {
-      "key": "win",
-      "label": "Win rate",
-      "unit": "%"
+      "key": "starts",
+      "label": "Starts",
+      "unit": ""
     },
     {
-      "key": "pole",
-      "label": "Pole rate",
+      "key": "points",
+      "label": "Points finishes",
       "unit": "%"
     },
     {
@@ -3615,18 +3615,18 @@
       "unit": "%"
     },
     {
-      "key": "points",
-      "label": "Points finishes",
+      "key": "pole",
+      "label": "Pole rate",
+      "unit": "%"
+    },
+    {
+      "key": "win",
+      "label": "Win rate",
       "unit": "%"
     },
     {
       "key": "titles",
       "label": "Titles",
-      "unit": ""
-    },
-    {
-      "key": "starts",
-      "label": "Starts",
       "unit": ""
     }
   ],

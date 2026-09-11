@@ -399,9 +399,10 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       <h2>The shape of a great</h2>
       <p>
         The thirty winningest drivers in the history of the sport, Fangio to Verstappen, each
-        drawn as one line across six axes. Career totals flatter whoever raced longest, so five
-        of the six are rates. Lines that run parallel are alike; a line that crosses the others
-        belongs to someone who was great in a different way.
+        drawn as one line across six axes. The axes run in order of rarity &mdash; turning up,
+        scoring, the podium, pole, the win, the title &mdash; so a line that stays high all the
+        way across belongs to someone who converted starts into everything else. Career totals
+        flatter whoever raced longest, so every axis after the first is a rate.
       </p>
       <p class="note" style="margin-top:6px">
         <b>Drag downward on any axis</b> to keep only the drivers inside that band &mdash; brush
@@ -1182,8 +1183,15 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
       band.setAttribute('visibility', 'visible');
       band.setAttribute('y', Math.min(y0, y1));
       band.setAttribute('height', Math.abs(y1 - y0));
-      const v0 = valAt(a, Math.min(y0, y1)), v1 = valAt(a, Math.max(y0, y1));
-      brushes[a.key] = [Math.min(v0, v1), Math.max(v0, v1)];
+      // Snap to the axis ends. The top pixel maps to exactly the maximum, so a
+      // drag starting a pixel below it would exclude the very drivers the
+      // gesture is reaching for — brushing the top of Titles returned nobody
+      // rather than the seven-time champions.
+      const EDGE = 5;
+      const yTop = Math.min(y0, y1), yBot = Math.max(y0, y1);
+      const hiV = yTop <= m.t + EDGE ? Infinity : valAt(a, yTop);
+      const loV = yBot >= m.t + ih - EDGE ? -Infinity : valAt(a, yBot);
+      brushes[a.key] = [loV, hiV];
       render();
     };
     const onUp = () => {

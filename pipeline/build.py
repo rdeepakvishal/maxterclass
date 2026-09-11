@@ -490,13 +490,18 @@ def main() -> int:
     pool = list(win_counts.nlargest(PROFILE_N).index)
     titles = finals[finals.position == 1].groupby("driverId").size()
 
+    # Ordered as a rarity funnel — turning up, scoring, the podium, pole, the
+    # win, the title. Only adjacent axes can be read against each other in a
+    # parallel-coordinates plot, so this puts the related pairs side by side and
+    # makes the career-shape crossings (a long career at modest rates against a
+    # short one at high rates) run the length of the chart.
     profile_axes = [
-        {"key": "win", "label": "Win rate", "unit": "%"},
-        {"key": "pole", "label": "Pole rate", "unit": "%"},
-        {"key": "podium", "label": "Podium rate", "unit": "%"},
-        {"key": "points", "label": "Points finishes", "unit": "%"},
-        {"key": "titles", "label": "Titles", "unit": ""},
         {"key": "starts", "label": "Starts", "unit": ""},
+        {"key": "points", "label": "Points finishes", "unit": "%"},
+        {"key": "podium", "label": "Podium rate", "unit": "%"},
+        {"key": "pole", "label": "Pole rate", "unit": "%"},
+        {"key": "win", "label": "Win rate", "unit": "%"},
+        {"key": "titles", "label": "Titles", "unit": ""},
     ]
     driver_profiles = []
     for did in pool:
