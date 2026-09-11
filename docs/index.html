@@ -713,30 +713,39 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
 /* ---------- 4. field share ---------- */
 (() => {
   const years = [2021, 2022, 2023, 2024, 2025, 2026];
-  const w = 1000, rowH = 92, m = { t: 8, r: 24, b: 8, l: 24 };
+  // The year sits in a left gutter rather than on its own line above each bar,
+  // which halves the row height without losing anything.
+  const w = 1000, rowH = 46, barH = 24, m = { t: 10, r: 24, b: 24, l: 58 };
   const h = m.t + years.length * rowH + m.b;
   const s = svg('c-field', w, h);
   const iw = w - m.l - m.r;
+
   years.forEach((yr, i) => {
     const rows = DATA.rivals[yr] || [];
     const yy = m.t + i * rowH;
-    txt(s, m.l, yy + 18, yr, 'labhi');
+    const by = yy + (rowH - barH) / 2;          // bar top, row-centred
+    const mid = by + barH / 2 + 4;              // text baseline inside the bar
+    txt(s, m.l - 12, mid, yr, 'labhi', 'end');
     let cx = m.l;
     rows.forEach(r => {
       const bw = (r.pct / 100) * iw;
-      el('rect', { x: cx, y: yy + 30, width: Math.max(bw - 2, 1), height: 26, rx: 2, fill: r.is_ver ? '--accent' : '--field', 'fill-opacity': r.is_ver ? 1 : .62 }, s);
-      if (bw > 74) txt(s, cx + 9, yy + 47, `${r.driver.split(' ').pop()} ${r.pct}%`, 'lab');
-      const hit = el('rect', { x: cx, y: yy + 30, width: Math.max(bw, 1), height: 26, class: 'hit' }, s);
-      hover(hit, `${yr} · ${r.driver}\n${r.laps_led} lead laps (${r.pct}%)`);
+      el('rect', { x: cx, y: by, width: Math.max(bw - 2, 1), height: barH, rx: 2,
+                   fill: r.is_ver ? '--accent' : '--field',
+                   'fill-opacity': r.is_ver ? 1 : .62 }, s);
+      if (bw > 92) txt(s, cx + 9, mid, `${r.driver.split(' ').pop()} ${r.pct}%`, 'lab');
+      const hit = el('rect', { x: cx, y: by, width: Math.max(bw, 1), height: barH,
+                               class: 'hit' }, s);
+      hover(hit, `${yr} \u00b7 ${r.driver}\n${r.laps_led} lead laps (${r.pct}%)`);
       cx += bw;
     });
     if (cx < m.l + iw) {
-      el('rect', { x: cx, y: yy + 30, width: m.l + iw - cx, height: 26, rx: 2, fill: '--grid' }, s);
-      const hit = el('rect', { x: cx, y: yy + 30, width: m.l + iw - cx, height: 26, class: 'hit' }, s);
+      const rest = m.l + iw - cx;
+      el('rect', { x: cx, y: by, width: rest, height: barH, rx: 2, fill: '--grid' }, s);
+      const hit = el('rect', { x: cx, y: by, width: rest, height: barH, class: 'hit' }, s);
       hover(hit, `${yr}\nEveryone else outside the top five`);
     }
-    el('line', { x1: m.l, x2: w - m.r, y1: yy + 74, y2: yy + 74, class: 'gl' }, s);
   });
+  txt(s, m.l, h - 8, 'share of every lead lap in the season \u2192', 'ax');
 })();
 
 /* ---------- 4a. 2025 title fight: cumulative championship points ---------- */
