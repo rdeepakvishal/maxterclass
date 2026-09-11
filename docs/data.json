@@ -3598,6 +3598,119 @@
       }
     ]
   },
+  "profile_axes": [
+    {
+      "key": "win",
+      "label": "Win rate",
+      "unit": "%"
+    },
+    {
+      "key": "pole",
+      "label": "Pole rate",
+      "unit": "%"
+    },
+    {
+      "key": "podium",
+      "label": "Podium rate",
+      "unit": "%"
+    },
+    {
+      "key": "led",
+      "label": "Laps led",
+      "unit": "%"
+    },
+    {
+      "key": "titles",
+      "label": "Titles",
+      "unit": ""
+    }
+  ],
+  "driver_profiles": [
+    {
+      "driver": "Max Verstappen",
+      "last": "Verstappen",
+      "starts": 245,
+      "span": "2015\u20132026",
+      "is_ver": true,
+      "win": 29.0,
+      "pole": 19.6,
+      "podium": 53.5,
+      "led": 29.2,
+      "titles": 4
+    },
+    {
+      "driver": "Michael Schumacher",
+      "last": "Schumacher",
+      "starts": 308,
+      "span": "1991\u20132012",
+      "is_ver": false,
+      "win": 29.5,
+      "pole": 22.1,
+      "podium": 50.3,
+      "led": 30.4,
+      "titles": 7
+    },
+    {
+      "driver": "Lewis Hamilton",
+      "last": "Hamilton",
+      "starts": 392,
+      "span": "2007\u20132026",
+      "is_ver": false,
+      "win": 27.0,
+      "pole": 26.5,
+      "podium": 52.8,
+      "led": 24.7,
+      "titles": 7
+    },
+    {
+      "driver": "Ayrton Senna",
+      "last": "Senna",
+      "starts": 162,
+      "span": "1984\u20131994",
+      "is_ver": false,
+      "win": 25.3,
+      "pole": 40.1,
+      "podium": 49.4,
+      "led": 35.3,
+      "titles": 3
+    },
+    {
+      "driver": "Alain Prost",
+      "last": "Prost",
+      "starts": 202,
+      "span": "1980\u20131993",
+      "is_ver": false,
+      "win": 25.2,
+      "pole": 16.3,
+      "podium": 52.5,
+      "led": 26.4,
+      "titles": 4
+    },
+    {
+      "driver": "Sebastian Vettel",
+      "last": "Vettel",
+      "starts": 300,
+      "span": "2007\u20132022",
+      "is_ver": false,
+      "win": 17.7,
+      "pole": 19.0,
+      "podium": 40.7,
+      "led": 21.3,
+      "titles": 4
+    },
+    {
+      "driver": "Fernando Alonso",
+      "last": "Alonso",
+      "starts": 440,
+      "span": "2001\u20132026",
+      "is_ver": false,
+      "win": 7.3,
+      "pole": 5.0,
+      "podium": 24.1,
+      "led": 7.5,
+      "titles": 2
+    }
+  ],
   "title_2025": {
     "rounds": [
       1,

@@ -473,6 +473,48 @@ def main() -> int:
         ],
     }
 
+    # ---- driver profiles for the parallel-coordinates chart ---------------
+    # Axes are deliberately restricted to measures that survive a cross-era
+    # comparison. Two candidates were dropped after checking the data:
+    #   * finish rate — Senna 67% vs Hamilton 92% is the reliability of the era,
+    #     not the driver, so it would read as a skill axis and mislead.
+    #   * teammate qualifying H2H — the qualifying table only begins in 1994 and
+    #     is patchy to 2000. Senna has 3 qualifying rows against 162 starts, so
+    #     his "100%" came from three weekends. Prost has none at all.
+    # Pole rate is taken from the grid (available for every era), not from the
+    # qualifying table, for the same reason.
+    PROFILE_DRIVERS = [830, 30, 1, 102, 117, 20, 4]   # VER MSC HAM SEN PRO VET ALO
+    prof_lap = lap_times.merge(races[["raceId", "year"]], on="raceId")
+    prof_lap = prof_lap[prof_lap.year >= 1982]
+    led_laps = prof_lap[prof_lap.position == 1].groupby("driverId").size()
+    run_laps = prof_lap.groupby("driverId").size()
+    titles = finals[finals.position == 1].groupby("driverId").size()
+
+    profile_axes = [
+        {"key": "win", "label": "Win rate", "unit": "%"},
+        {"key": "pole", "label": "Pole rate", "unit": "%"},
+        {"key": "podium", "label": "Podium rate", "unit": "%"},
+        {"key": "led", "label": "Laps led", "unit": "%"},
+        {"key": "titles", "label": "Titles", "unit": ""},
+    ]
+    driver_profiles = []
+    for did in PROFILE_DRIVERS:
+        x = res[res.driverId == did]
+        if x.empty:
+            continue
+        driver_profiles.append({
+            "driver": name_of[did],
+            "last": name_of[did].split()[-1],
+            "starts": int(len(x)),
+            "span": f"{int(x.year.min())}\u2013{int(x.year.max())}",
+            "is_ver": bool(did == VER),
+            "win": round(float((x.fin == 1).mean()) * 100, 1),
+            "pole": round(float((x.grid == 1).mean()) * 100, 1),
+            "podium": round(float((x.fin <= 3).mean()) * 100, 1),
+            "led": round(float(led_laps.get(did, 0)) / max(int(run_laps.get(did, 1)), 1) * 100, 1),
+            "titles": int(titles.get(did, 0)),
+        })
+
     wins = ver[ver.fin == 1]
     payload = {
         "meta": {
@@ -497,6 +539,8 @@ def main() -> int:
         "comebacks": comebacks,
         "champion_years": champion_years,
         "grand_slams": grand_slams,
+        "profile_axes": profile_axes,
+        "driver_profiles": driver_profiles,
         "title_2025": title_2025,
         "split_2025": split_2025,
         "overtakes_2023_raw": ot_rows(top_raw),

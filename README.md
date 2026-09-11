@@ -33,6 +33,12 @@ To preview:
 
     python3 -m http.server 8899 --directory site
 
+## Author
+
+Made by **Deepak Vishal** — Ergast's Formula 1 database parsed into a metric
+layer with a Python pipeline, every chart hand-built as inline SVG, no charting
+library. Hero artwork by TLDesign.
+
 ## Hosting
 
 `docs/index.html` is a single self-contained page — inline CSS, inline JS, the
@@ -122,3 +128,12 @@ inlined as a data URI at build time and credited on the page. Since the built
 `docs/index.html` carries the image regardless, the source file is committed too
 rather than gitignored — hiding it only broke the build for anyone cloning. The
 build warns and omits the image if the file is absent.
+
+**Cross-era comparisons.** The parallel-coordinates chart uses rates, not
+totals, and only measures that survive an era comparison. Two candidates were
+dropped after checking: *finishing rate*, because Senna's 67% against Hamilton's
+92% measures the reliability of their eras rather than the drivers; and the
+*teammate qualifying head-to-head*, because Ergast's `qualifying` table starts
+in 1994 and is patchy to 2000 — Senna has 3 qualifying rows against 162 starts,
+and Prost has none. Pole rate is therefore taken from the grid, which every era
+has, rather than from the qualifying table.
