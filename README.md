@@ -33,6 +33,13 @@ To preview:
 
     python3 -m http.server 8899 --directory site
 
+## Browser mark
+
+The favicon is a 4x4 chequer in the page palette — navy ground, accent orange,
+light — written inline as an SVG data URI in `docs/template.html`, so there is
+no icon file to host and it stays sharp at any size. GitHub Pages served no
+favicon at all before it was added.
+
 ## Author
 
 Made by **Deepak Vishal** — Ergast's Formula 1 database parsed into a metric
