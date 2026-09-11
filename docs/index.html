@@ -406,7 +406,8 @@ footer code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--i
       <p class="note" style="margin-top:6px">
         <b>Drag downward on any axis</b> to keep only the drivers inside that band &mdash; brush
         several axes to intersect them. Click an axis to clear it. Hover a line to read one
-        driver's numbers.
+        driver's numbers. Only the eleven drivers with three or more championships are labelled
+        by default; the rest name themselves on hover, or when a brush narrows the field to them.
       </p>
     </div>
     <figure>
@@ -1080,12 +1081,13 @@ hbars('c-ratio', DATA.overtakes_2023_ratio.map(r => ({
     return { d, line, endY: pts[pts.length - 1][1], lab: null };
   });
 
-  // Thirty names down one edge is noise, so labels are selective and dynamic:
-  // Verstappen plus the leaders by default, and exactly the brushed set once a
-  // filter narrows things down — which makes the brush reveal who survived.
-  const lx = ax(AX.length - 1), GAP = 15;
+  // Thirty names down one edge is noise, so labels are selective and dynamic.
+  // The standing set is the multiple champions — a real category rather than an
+  // arbitrary top-N — and everyone else surfaces on hover or when a brush
+  // narrows the field to them.
+  const lx = ax(AX.length - 1), GAP = 15, TITLE_CUT = 3;
   const TOP = new Set(
-    [...P].sort((a, b) => b.win - a.win).slice(0, 7).map(d => d.driver)
+    P.filter(d => d.titles >= TITLE_CUT || d.is_ver).map(d => d.driver)
   );
   rows.forEach(r => {
     r.leader = el('polyline', { points: '0,0', fill: 'none',
